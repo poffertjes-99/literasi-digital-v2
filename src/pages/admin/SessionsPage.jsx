@@ -1,220 +1,204 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs, addDoc, updateDoc, doc, serverTimestamp, query, orderBy } from 'firebase/firestore';
+import { collection, getDocs, addDoc, deleteDoc, updateDoc, doc, serverTimestamp, query, orderBy } from 'firebase/firestore';
 import { db } from '../../../firebase';
-import { useAuth } from '../../context/AuthContext';
-import { generateSessionCode } from '../../utils/scoring';
-import { Wifi, Plus, Copy, CheckCircle2, ToggleLeft, ToggleRight, Loader2, Lock, Unlock } from 'lucide-react';
-
-const STATUS = {
-  active: { label: 'Aktif', class: 'bg-emerald-100 text-emerald-700', icon: Unlock },
-  closed: { label: 'Ditutup', class: 'bg-slate-100 text-slate-500', icon: Lock },
-};
+import { PILLARS, generateSessionCode } from '../../utils/scoring';
+import { Wifi, Plus, Trash2, Loader2, Play, CircleSlash, ExternalLink, Calendar, Users } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function SessionsPage() {
-  const { user } = useAuth();
+  const navigate = useNavigate();
   const [sessions, setSessions] = useState([]);
   const [modules, setModules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ moduleId: '', name: '' });
+  const [form, setForm] = useState({ moduleId: '', label: '' });
   const [saving, setSaving] = useState(false);
-  const [copied, setCopied] = useState(null);
-  const [togglingId, setTogglingId] = useState(null);
+  const [deletingId, setDeletingId] = useState(null); // State untuk tracking proses hapus
 
-  const fetchAll = async () => {
-    const [sessionsSnap, modulesSnap] = await Promise.all([
-      getDocs(query(collection(db, 'sessions'), orderBy('createdAt', 'desc'))),
-      getDocs(collection(db, 'modules')),
-    ]);
-    setSessions(sessionsSnap.docs.map((d) => ({ id: d.id, ...d.data() })));
-    setModules(modulesSnap.docs.map((d) => ({ id: d.id, ...d.data() })));
-    setLoading(false);
+  const fetchData = async () => {
+    try {
+      const [sessionsSnap, modulesSnap] = await Promise.all([
+        getDocs(query(collection(db, 'sessions'), orderBy('createdAt', 'desc'))),
+        getDocs(collection(db, 'modules'))
+      ]);
+
+      setSessions(sessionsSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+      setModules(modulesSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+    } finally {
+      setLoading(false);
+    }
   };
 
-  useEffect(() => { fetchAll(); }, []);
+  useEffect(() => { fetchData(); }, []);
 
-  const handleCreate = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.moduleId) return;
     setSaving(true);
     try {
-      const sessionCode = generateSessionCode();
+      const selectedModule = modules.find(m => m.id === form.moduleId);
       await addDoc(collection(db, 'sessions'), {
-        sessionCode,
-        moduleId: form.moduleId,
-        name: form.name || `Sesi ${sessionCode}`,
+        ...form,
+        moduleTitle: selectedModule.title,
+        sessionCode: generateSessionCode(),
         status: 'active',
+        submissionCount: 0,
         createdAt: serverTimestamp(),
-        createdBy: user?.uid,
-        submissions: [],
       });
-      setForm({ moduleId: '', name: '' });
+      setForm({ moduleId: '', label: '' });
       setShowForm(false);
-      fetchAll();
+      fetchData();
     } finally {
       setSaving(false);
     }
   };
 
-  const handleCopy = (code) => {
-    navigator.clipboard.writeText(code);
-    setCopied(code);
-    setTimeout(() => setCopied(null), 2000);
-  };
+  // 🚨 FUNGSI BARU: Hapus Sesi
+  const handleDelete = async (sessionId) => {
+    if (!confirm('Hapus sesi ini? Seluruh data jawaban mahasiswa di dalamnya akan ikut terhapus dan tidak bisa dikembalikan.')) return;
 
-  const handleToggleStatus = async (session) => {
-    setTogglingId(session.id);
-    const newStatus = session.status === 'active' ? 'closed' : 'active';
+    setDeletingId(sessionId);
     try {
-      await updateDoc(doc(db, 'sessions', session.id), { status: newStatus });
-      setSessions((prev) => prev.map((s) => s.id === session.id ? { ...s, status: newStatus } : s));
+      await deleteDoc(doc(db, 'sessions', sessionId));
+      setSessions(prev => prev.filter(s => s.id !== sessionId));
+    } catch (err) {
+      console.error("Error deleting session:", err);
+      alert("Gagal menghapus sesi. Cek koneksi Anda.");
     } finally {
-      setTogglingId(null);
+      setDeletingId(null);
     }
   };
+
+  const toggleStatus = async (sessionId, currentStatus) => {
+    const newStatus = currentStatus === 'active' ? 'closed' : 'active';
+    await updateDoc(doc(db, 'sessions', sessionId), { status: newStatus });
+    setSessions(prev => prev.map(s => s.id === sessionId ? { ...s, status: newStatus } : s));
+  };
+
+  if (loading) return <div className="p-8 space-y-4">{[1, 2, 3].map(i => <div key={i} className="h-24 bg-slate-100 rounded-2xl animate-pulse" />)}</div>;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Sesi Pengujian</h1>
-          <p className="text-slate-500 text-sm mt-1">Buat dan kelola sesi untuk berbagi ke peserta</p>
+          <h1 className="text-2xl font-bold text-slate-800">Sesi Ujian</h1>
+          <p className="text-slate-500 text-sm mt-1">Kelola akses dan kode masuk untuk peserta kuis</p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm"
+          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200"
         >
-          <Plus size={16} /> Buat Sesi
+          {showForm ? 'Batal' : <><Plus size={16} /> Buka Sesi Baru</>}
         </button>
       </div>
 
-      {/* Create Form */}
       {showForm && (
-        <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6">
-          <h2 className="text-sm font-semibold text-blue-900 mb-4">Sesi Baru</h2>
-          <form onSubmit={handleCreate} className="space-y-4">
+        <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6 animate-in fade-in slide-in-from-top-4 duration-300">
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="text-xs font-medium text-slate-600 mb-1 block">Pilih Modul *</label>
-              {modules.length === 0 ? (
-                <p className="text-sm text-amber-600">⚠ Belum ada modul. Buat modul terlebih dahulu.</p>
-              ) : (
-                <select
-                  value={form.moduleId}
-                  onChange={(e) => setForm({ ...form, moduleId: e.target.value })}
-                  required
-                  className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                >
-                  <option value="">-- Pilih Modul --</option>
-                  {modules.map((m) => <option key={m.id} value={m.id}>{m.title}</option>)}
-                </select>
-              )}
+              <label className="block text-[10px] font-bold text-blue-600 uppercase mb-2">Pilih Modul Soal</label>
+              <select
+                value={form.moduleId}
+                onChange={(e) => setForm({ ...form, moduleId: e.target.value })}
+                className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-400"
+                required
+              >
+                <option value="">-- Pilih Modul --</option>
+                {modules.map(m => <option key={m.id} value={m.id}>{m.title}</option>)}
+              </select>
             </div>
             <div>
-              <label className="text-xs font-medium text-slate-600 mb-1 block">Nama Sesi (opsional)</label>
+              <label className="block text-[10px] font-bold text-blue-600 uppercase mb-2">Label Sesi (Opsional)</label>
               <input
                 type="text"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                placeholder="e.g., Kelas A — Angkatan 2022"
-                className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                value={form.label}
+                onChange={(e) => setForm({ ...form, label: e.target.value })}
+                placeholder="Misal: Batch 1 - Kelas A"
+                className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-blue-400"
               />
             </div>
-            <p className="text-xs text-slate-500">
-              Kode sesi akan dibuat otomatis (6 karakter alfanumerik).
-            </p>
-            <div className="flex gap-3">
-              <button type="submit" disabled={saving || modules.length === 0} className="flex items-center gap-2 px-5 py-2 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 disabled:opacity-60">
-                {saving ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
-                {saving ? 'Membuat...' : 'Buat Sesi'}
-              </button>
-              <button type="button" onClick={() => setShowForm(false)} className="px-5 py-2 bg-white border border-slate-200 text-slate-600 rounded-xl text-sm font-medium hover:bg-slate-50">
-                Batal
+            <div className="flex items-end">
+              <button
+                type="submit"
+                disabled={saving}
+                className="w-full py-2.5 bg-blue-600 text-white rounded-xl font-bold text-sm hover:bg-blue-700 disabled:opacity-50"
+              >
+                {saving ? 'Memproses...' : 'Generate Kode Sesi'}
               </button>
             </div>
           </form>
         </div>
       )}
 
-      {/* Sessions List */}
-      {loading ? (
-        <div className="space-y-3">{[1,2].map(i=><div key={i} className="h-24 bg-slate-100 rounded-2xl animate-pulse"/>)}</div>
-      ) : sessions.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-dashed border-slate-200 p-12 text-center">
-          <Wifi size={40} className="mx-auto text-slate-300 mb-3" />
-          <p className="text-slate-500 font-medium">Belum ada sesi</p>
-          <p className="text-slate-400 text-sm mt-1">Klik "Buat Sesi" untuk membuat sesi pertama.</p>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {sessions.map((s) => {
-            const status = STATUS[s.status] || STATUS.closed;
-            const StatusIcon = status.icon;
-            const moduleName = modules.find((m) => m.id === s.moduleId)?.title || s.moduleId;
-            const joinUrl = `${window.location.origin}/quiz/${s.sessionCode}`;
-            return (
-              <div key={s.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap mb-1">
-                      <h3 className="font-semibold text-slate-800">{s.name}</h3>
-                      <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${status.class}`}>
-                        <StatusIcon size={11} />{status.label}
-                      </span>
+      <div className="grid grid-cols-1 gap-4">
+        {sessions.length === 0 ? (
+          <div className="bg-white rounded-2xl border border-dashed border-slate-200 p-12 text-center text-slate-400">
+            Belum ada sesi aktif. Klik "Buka Sesi Baru" untuk memulai.
+          </div>
+        ) : (
+          sessions.map((session) => (
+            <div key={session.id} className="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-all group">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="flex items-start gap-4">
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${session.status === 'active' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}>
+                    <Wifi size={20} />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-bold text-slate-800">{session.moduleTitle}</h3>
+                      {session.label && <span className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded text-[10px] font-bold uppercase">{session.label}</span>}
                     </div>
-                    <p className="text-xs text-slate-400">{moduleName}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">{s.submissions?.length || 0} submission</p>
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-xs text-slate-400">
+                      <span className="flex items-center gap-1"><Calendar size={12} /> {session.createdAt?.toDate().toLocaleDateString('id-ID')}</span>
+                      <span className="flex items-center gap-1"><Users size={12} /> {session.submissionCount || 0} Partisipan</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between md:justify-end gap-6 bg-slate-50 md:bg-transparent p-3 md:p-0 rounded-xl">
+                  <div className="text-center">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Kode Sesi</p>
+                    <p className="text-xl font-black text-blue-600 font-mono tracking-tighter leading-none mt-1">{session.sessionCode}</p>
                   </div>
 
-                  {/* Session Code */}
-                  <div className="flex flex-col items-end gap-2">
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-2xl font-bold tracking-widest text-blue-600 bg-blue-50 px-3 py-1.5 rounded-xl">
-                        {s.sessionCode}
-                      </span>
-                      <button
-                        onClick={() => handleCopy(s.sessionCode)}
-                        className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                        title="Salin kode"
-                      >
-                        {copied === s.sessionCode ? <CheckCircle2 size={16} className="text-emerald-500" /> : <Copy size={16} />}
-                      </button>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    {/* Status Toggle */}
                     <button
-                      onClick={() => handleToggleStatus(s)}
-                      disabled={togglingId === s.id}
-                      className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors ${
-                        s.status === 'active'
-                          ? 'text-slate-600 hover:bg-red-50 hover:text-red-600'
-                          : 'text-slate-600 hover:bg-emerald-50 hover:text-emerald-600'
-                      }`}
+                      onClick={() => toggleStatus(session.id, session.status)}
+                      className={`p-2.5 rounded-xl border transition-all ${session.status === 'active'
+                        ? 'bg-white text-emerald-600 border-emerald-100 hover:bg-emerald-50'
+                        : 'bg-white text-slate-400 border-slate-200 hover:bg-slate-50'
+                        }`}
+                      title={session.status === 'active' ? 'Tutup Sesi' : 'Aktifkan Sesi'}
                     >
-                      {togglingId === s.id ? (
-                        <Loader2 size={12} className="animate-spin" />
-                      ) : s.status === 'active' ? (
-                        <ToggleRight size={14} />
-                      ) : (
-                        <ToggleLeft size={14} />
-                      )}
-                      {s.status === 'active' ? 'Tutup Sesi' : 'Buka Sesi'}
+                      {session.status === 'active' ? <CircleSlash size={18} /> : <Play size={18} />}
+                    </button>
+
+                    {/* View Analytics */}
+                    <button
+                      onClick={() => navigate('/admin/analytics', { state: { sessionId: session.id } })}
+                      className="p-2.5 bg-white text-blue-600 border border-blue-100 rounded-xl hover:bg-blue-50 transition-all"
+                      title="Lihat Hasil"
+                    >
+                      <ExternalLink size={18} />
+                    </button>
+
+                    {/* 🚨 DELETE BUTTON */}
+                    <button
+                      onClick={() => handleDelete(session.id)}
+                      disabled={deletingId === session.id}
+                      className="p-2.5 bg-white text-slate-300 border border-slate-100 rounded-xl hover:text-red-600 hover:border-red-100 hover:bg-red-50 transition-all"
+                      title="Hapus Sesi"
+                    >
+                      {deletingId === session.id ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}
                     </button>
                   </div>
                 </div>
-
-                {/* Join URL */}
-                <div className="mt-3 pt-3 border-t border-slate-100 flex items-center gap-2">
-                  <span className="text-xs text-slate-400 truncate flex-1 font-mono">{joinUrl}</span>
-                  <button
-                    onClick={() => handleCopy(joinUrl)}
-                    className="text-xs text-blue-600 hover:underline flex-shrink-0"
-                  >
-                    {copied === joinUrl ? '✓ Tersalin' : 'Salin Link'}
-                  </button>
-                </div>
               </div>
-            );
-          })}
-        </div>
-      )}
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 }
