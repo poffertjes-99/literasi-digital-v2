@@ -1,67 +1,126 @@
 /**
- * Scoring utility for the Digital Literacy Measurement System
- * Based on the Kominfo/Siberkreasi 4-pillar framework.
+ * GLOBAL DIGITAL LITERACY FRAMEWORK (UNESCO DLGF / DigComp 2.2)
+ * Total: 7 Areas, 26 Competencies
  */
-
-export const PILLARS = {
-  DSK: {
-    code: 'DSK',
-    label: 'Kecakapan Digital',
-    indicators: [
-      { code: 'DSK1', label: 'Perangkat Keras & Lunak' },
-      { code: 'DSK2', label: 'Mesin Pencari Informasi' },
-      { code: 'DSK3', label: 'Aplikasi Percakapan & Medsos' },
-      { code: 'DSK4', label: 'Dompet Digital & E-Commerce' }
-    ],
-    bgColor: 'bg-blue-100', textColor: 'text-blue-700'
+export const GLOBAL_FRAMEWORK = {
+  AREA_0: {
+    code: '0',
+    label: 'Devices & Software Operations',
+    color: '#64748b',
+    bgColor: 'bg-slate-100',
+    textColor: 'text-slate-700',
+    competencies: [
+      { code: '0.1', label: 'Physical Devices & Hardware' },
+      { code: '0.2', label: 'Software & Basic Apps' }
+    ]
   },
-  DET: {
-    code: 'DET',
-    label: 'Etika Digital',
-    indicators: [
-      { code: 'DET1', label: 'Etika Berinternet (Netiquette)' },
-      { code: 'DET2', label: 'Konten Negatif (Hoax, dll)' },
-      { code: 'DET3', label: 'Interaksi Sahabat Digital' },
-      { code: 'DET4', label: 'Bertransaksi Secara Etis' }
-    ],
-    bgColor: 'bg-emerald-100', textColor: 'text-emerald-700'
+  AREA_1: {
+    code: '1',
+    label: 'Information & Data Literacy',
+    color: '#3b82f6',
+    bgColor: 'bg-blue-100',
+    textColor: 'text-blue-700',
+    competencies: [
+      { code: '1.1', label: 'Browsing, Searching & Filtering' },
+      { code: '1.2', label: 'Evaluating Data & Content' },
+      { code: '1.3', label: 'Managing Data & Content' }
+    ]
   },
-  DSA: {
-    code: 'DSA',
-    label: 'Keamanan Digital',
-    indicators: [
-      { code: 'DSA1', label: 'Proteksi Perangkat Keras' },
-      { code: 'DSA2', label: 'Proteksi Identitas Digital' },
-      { code: 'DSA3', label: 'Penipuan Digital' },
-      { code: 'DSA4', label: 'Rekam Jejak Digital' }
-    ],
-    bgColor: 'bg-amber-100', textColor: 'text-amber-700'
+  AREA_2: {
+    code: '2',
+    label: 'Communication & Collaboration',
+    color: '#10b981',
+    bgColor: 'bg-emerald-100',
+    textColor: 'text-emerald-700',
+    competencies: [
+      { code: '2.1', label: 'Interacting via Digital Tech' },
+      { code: '2.2', label: 'Sharing information & content' },
+      { code: '2.3', label: 'Engaging in Citizenship' },
+      { code: '2.4', label: 'Collaborating via Digital Tech' },
+      { code: '2.5', label: 'Netiquette' },
+      { code: '2.6', label: 'Managing Digital Identity' }
+    ]
   },
-  DCU: {
-    code: 'DCU',
-    label: 'Budaya Digital',
-    indicators: [
-      { code: 'DCU1', label: 'Hak Digital' },
-      { code: 'DCU2', label: 'Nilai Pancasila & Bhinneka' },
-      { code: 'DCU3', label: 'Cinta Produk Dalam Negeri' },
-      { code: 'DCU4', label: 'Digitalisasi Budaya' }
-    ],
-    bgColor: 'bg-violet-100', textColor: 'text-violet-700'
+  AREA_3: {
+    code: '3',
+    label: 'Digital Content Creation',
+    color: '#8b5cf6',
+    bgColor: 'bg-violet-100',
+    textColor: 'text-violet-700',
+    competencies: [
+      { code: '3.1', label: 'Developing Digital Content' },
+      { code: '3.2', label: 'Integrating & Re-elaborating' },
+      { code: '3.3', label: 'Copyright & Licenses' },
+      { code: '3.4', label: 'Programming' }
+    ]
   },
+  AREA_4: {
+    code: '4',
+    label: 'Safety',
+    color: '#f59e0b',
+    bgColor: 'bg-amber-100',
+    textColor: 'text-amber-700',
+    competencies: [
+      { code: '4.1', label: 'Protecting Devices' },
+      { code: '4.2', label: 'Protecting Personal Data' },
+      { code: '4.3', label: 'Protecting Health & Wellbeing' },
+      { code: '4.4', label: 'Protecting the Environment' }
+    ]
+  },
+  AREA_5: {
+    code: '5',
+    label: 'Problem Solving',
+    color: '#ef4444',
+    bgColor: 'bg-red-100',
+    textColor: 'text-red-700',
+    competencies: [
+      { code: '5.1', label: 'Solving Technical Problems' },
+      { code: '5.2', label: 'Identifying Needs & Responses' },
+      { code: '5.3', label: 'Creatively using Digital Tech' },
+      { code: '5.4', label: 'Identifying Digital Gaps' }
+    ]
+  },
+  AREA_6: {
+    code: '6',
+    label: 'Career-Related Competences',
+    color: '#ec4899',
+    bgColor: 'bg-pink-100',
+    textColor: 'text-pink-700',
+    competencies: [
+      { code: '6.1', label: 'Operating Tech in Workplace' },
+      { code: '6.2', label: 'Career Data Management' },
+      { code: '6.3', label: 'Professional Networking' }
+    ]
+  }
 };
 
+const TOTAL_COMPETENCIES = 26;
+
+/**
+ * Calculates the percentage of unique competencies covered by the questions.
+ */
+export function calculateFrameworkCoverage(questions) {
+  if (!questions || questions.length === 0) return 0;
+  const coveredCodes = new Set(questions.map(q => q.competencyCode).filter(Boolean));
+  return Math.round((coveredCodes.size / TOTAL_COMPETENCIES) * 100);
+}
+
+/**
+ * Scoring calculation remains standard (average of Area scores)
+ */
 export function calculateScores(answers, maxWeight = 5) {
-  const pillarData = {};
-  answers.forEach(({ pillarCode, selectedWeight }) => {
-    if (!pillarData[pillarCode]) pillarData[pillarCode] = { total: 0, count: 0 };
-    pillarData[pillarCode].total += selectedWeight;
-    pillarData[pillarCode].count += 1;
+  const areaData = {};
+  answers.forEach(({ areaCode, selectedWeight }) => {
+    if (!areaData[areaCode]) areaData[areaCode] = { total: 0, count: 0 };
+    areaData[areaCode].total += selectedWeight;
+    areaData[areaCode].count += 1;
   });
 
   const scores = {};
-  Object.keys(PILLARS).forEach((code) => {
-    if (pillarData[code]) {
-      const { total, count } = pillarData[code];
+  Object.keys(GLOBAL_FRAMEWORK).forEach((key) => {
+    const code = GLOBAL_FRAMEWORK[key].code;
+    if (areaData[code]) {
+      const { total, count } = areaData[code];
       scores[code] = Math.round((total / (count * maxWeight)) * 100);
     } else {
       scores[code] = 0;
@@ -69,7 +128,10 @@ export function calculateScores(answers, maxWeight = 5) {
   });
 
   const allScores = Object.values(scores);
-  const overallIndex = allScores.length ? Math.round(allScores.reduce((a, b) => a + b, 0) / allScores.length) : 0;
+  const overallIndex = allScores.length
+    ? Math.round(allScores.reduce((a, b) => a + b, 0) / allScores.length)
+    : 0;
+
   return { scores, overallIndex };
 }
 
