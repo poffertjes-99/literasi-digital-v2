@@ -11,13 +11,11 @@ export function AuthProvider({ children }) {
   const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🚨 State Mahasiswa dengan Persistence (Tahan Refresh)
   const [studentSession, setStudentSession] = useState(() => {
     const saved = localStorage.getItem('student_session');
     return saved ? JSON.parse(saved) : null;
   });
 
-  // Sinkronisasi otomatis ke localStorage
   useEffect(() => {
     if (studentSession) {
       localStorage.setItem('student_session', JSON.stringify(studentSession));
@@ -33,31 +31,22 @@ export function AuthProvider({ children }) {
         if (currentUser) {
           const email = currentUser.email.toLowerCase();
           const adminSnap = await getDoc(doc(db, 'admins', email));
-
           if (adminSnap.exists()) {
             setIsAdmin(true);
             setUser(currentUser);
             setRole('admin');
           } else {
-            const managementSnap = await getDoc(doc(db, 'management', email));
-            if (managementSnap.exists()) {
-              setIsAdmin(true);
-              setUser(currentUser);
-              setRole('management');
-            } else {
-              setIsAdmin(false);
-              setUser(null);
-              setRole(null);
-              await auth.signOut();
-            }
+            setIsAdmin(false);
+            setUser(null);
+            setRole(null);
           }
         } else {
           setUser(null);
           setIsAdmin(false);
           setRole(null);
         }
-      } catch (error) {
-        console.error("Auth permission error:", error);
+      } catch (e) {
+        console.error("Auth check failed:", e);
       } finally {
         setLoading(false);
       }
@@ -66,10 +55,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{
-      user, isAdmin, role, loading,
-      studentSession, setStudentSession
-    }}>
+    <AuthContext.Provider value={{ user, isAdmin, role, loading, studentSession, setStudentSession }}>
       {children}
     </AuthContext.Provider>
   );
