@@ -1,13 +1,13 @@
 /**
  * Universal Student Email Parser
- * Supported format: jurusan-nim@students.ithb.ac.id (e.g., si-19031@students.ithb.ac.id)
- * Fallback: Any valid email is accepted.
+ * Supports: si-19031@students.ithb.ac.id
+ * Fallback: Any valid email
  */
 
 // Matches: si-19031@students.ithb.ac.id
-const ITHB_REGEX = /^([a-zA-Z]+)-(\d{2})(\d+)@students\.ithb\.ac\.id$/;
-// Generic email check
-const GENERIC_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const ITHB_REGEX = /^([a-zA-Z]+)-(\d+)@students\.ithb\.ac\.id$/;
+// Generic email validation
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function parseStudentEmail(email) {
   const trimmed = (email || '').trim().toLowerCase();
@@ -16,28 +16,32 @@ export function parseStudentEmail(email) {
     return { valid: false, message: 'Email tidak boleh kosong.' };
   }
 
-  // Check if it's a valid email structure first
-  if (!GENERIC_REGEX.test(trimmed)) {
-    return { valid: false, message: 'Format email tidak valid.' };
+  if (!EMAIL_REGEX.test(trimmed)) {
+    return {
+      valid: false,
+      message: 'Format email tidak valid. Contoh: si-19031@students.ithb.ac.id'
+    };
   }
 
   const ithbMatch = trimmed.match(ITHB_REGEX);
 
   if (ithbMatch) {
-    const [, jurusan, yearShort, serial] = ithbMatch;
+    const [, jurusan, nim] = ithbMatch;
+    // Extract year from NIM (e.g., 19031 -> 2019)
+    const yearShort = nim.substring(0, 2);
     return {
       valid: true,
-      studentId: `${yearShort}${serial}`, // Uses numeric part as ID
+      studentId: nim,
       jurusan: jurusan.toUpperCase(),
-      angkatan: `20${yearShort}`, // e.g., 19 -> 2019
+      angkatan: `20${yearShort}`,
       isInstitutional: true
     };
   }
 
-  // FALLBACK: Allow any other email (Gmail, Outlook, etc.)
+  // FALLBACK: Allow any valid email (Gmail, etc.)
   return {
     valid: true,
-    studentId: trimmed.split('@')[0], // Use part before @ as ID
+    studentId: trimmed.replace(/[@.]/g, '_'), // Create a valid Firestore ID from email
     jurusan: 'GUEST',
     angkatan: 'OTHER',
     isInstitutional: false
