@@ -11,29 +11,39 @@ export function AuthProvider({ children }) {
   const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // 🚨 TAMBAHKAN: Inisialisasi dari localStorage agar data tidak hilang saat refresh
+  const [studentSession, setStudentSession] = useState(() => {
+    const saved = localStorage.getItem('student_session');
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  // 🚨 TAMBAHKAN: Simpan ke localStorage setiap kali studentSession berubah
+  useEffect(() => {
+    if (studentSession) {
+      localStorage.setItem('student_session', JSON.stringify(studentSession));
+    } else {
+      localStorage.removeItem('student_session');
+    }
+  }, [studentSession]);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setLoading(true);
       if (currentUser) {
         const email = currentUser.email.toLowerCase();
-
-        // Door 1: Check the 'admins' collection
         const adminSnap = await getDoc(doc(db, 'admins', email));
 
         if (adminSnap.exists()) {
           setIsAdmin(true);
           setUser(currentUser);
-          setRole('admin'); // They get full access
+          setRole('admin');
         } else {
-          // Door 2: Check the 'management' collection
           const managementSnap = await getDoc(doc(db, 'management', email));
-
           if (managementSnap.exists()) {
             setIsAdmin(true);
             setUser(currentUser);
-            setRole('management'); // They only get view access
+            setRole('management');
           } else {
-            // Not in either collection? Kick them out.
             setIsAdmin(false);
             setUser(null);
             setRole(null);
@@ -51,7 +61,10 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isAdmin, role, loading }}>
+    <AuthContext.Provider value={{
+      user, isAdmin, role, loading,
+      studentSession, setStudentSession // Pastikan ini diekspor
+    }}>
       {children}
     </AuthContext.Provider>
   );
