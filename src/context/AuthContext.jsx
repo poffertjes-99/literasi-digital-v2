@@ -8,27 +8,42 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setLoading(true);
       if (currentUser) {
-        // Only checking 'admins' collection
-        const adminRef = doc(db, 'admins', currentUser.email.toLowerCase());
-        const adminSnap = await getDoc(adminRef);
+        const email = currentUser.email.toLowerCase();
+
+        // Door 1: Check the 'admins' collection
+        const adminSnap = await getDoc(doc(db, 'admins', email));
 
         if (adminSnap.exists()) {
           setIsAdmin(true);
           setUser(currentUser);
+          setRole('admin'); // They get full access
         } else {
-          setIsAdmin(false);
-          setUser(null);
-          await auth.signOut();
+          // Door 2: Check the 'management' collection
+          const managementSnap = await getDoc(doc(db, 'management', email));
+
+          if (managementSnap.exists()) {
+            setIsAdmin(true);
+            setUser(currentUser);
+            setRole('management'); // They only get view access
+          } else {
+            // Not in either collection? Kick them out.
+            setIsAdmin(false);
+            setUser(null);
+            setRole(null);
+            await auth.signOut();
+          }
         }
       } else {
         setUser(null);
         setIsAdmin(false);
+        setRole(null);
       }
       setLoading(false);
     });
@@ -36,7 +51,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isAdmin, loading }}>
+    <AuthContext.Provider value={{ user, isAdmin, role, loading }}>
       {children}
     </AuthContext.Provider>
   );

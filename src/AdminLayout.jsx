@@ -5,25 +5,25 @@ import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import { useAuth } from "./context/AuthContext";
 
-const navItems = [
-  { to: "/admin", label: "Overview", icon: LayoutDashboard, end: true },
-  { to: "/admin/modules", label: "Modul", icon: BookOpen },
-  { to: "/admin/sessions", label: "Sesi", icon: Wifi },
-  { to: "/admin/analytics", label: "Analytics", icon: BarChart2 },
+// Define exactly who can see what
+const ALL_NAV_ITEMS = [
+  { to: "/admin", label: "Overview", icon: LayoutDashboard, end: true, allowedRoles: ['admin', 'management'] },
+  { to: "/admin/modules", label: "Modul", icon: BookOpen, allowedRoles: ['admin'] }, // Only Admins
+  { to: "/admin/sessions", label: "Sesi", icon: Wifi, allowedRoles: ['admin'] },    // Only Admins
+  { to: "/admin/analytics", label: "Analytics", icon: BarChart2, allowedRoles: ['admin', 'management'] },
 ];
 
 const AdminLayout = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, role } = useAuth(); // Pulls 'admin' or 'management'
 
   const handleLogout = async () => {
     await signOut(auth);
     navigate("/login");
   };
 
-  const initials = user?.displayName
-    ? user.displayName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()
-    : "AD";
+  // Filter the sidebar items based on the user's role
+  const visibleNavItems = ALL_NAV_ITEMS.filter(item => item.allowedRoles.includes(role));
 
   return (
     <div className="flex min-h-screen bg-slate-50 font-sans">
@@ -35,13 +35,13 @@ const AdminLayout = () => {
             </div>
             <div>
               <h2 className="text-sm font-bold text-slate-800 leading-tight">Literasi Digital</h2>
-              <p className="text-xs text-slate-400">Admin Console</p>
+              <p className="text-xs text-slate-400 capitalize">{role} Console</p>
             </div>
           </div>
         </div>
 
         <nav className="flex-1 py-4 px-3 space-y-1">
-          {navItems.map(({ to, label, icon: Icon, end }) => (
+          {visibleNavItems.map(({ to, label, icon: Icon, end }) => (
             <NavLink
               key={to}
               to={to}
@@ -63,8 +63,16 @@ const AdminLayout = () => {
         </div>
       </aside>
       <main className="flex-1 ml-64 min-h-screen">
-        <header className="h-14 bg-white border-b border-slate-200 flex items-center px-8 sticky top-0 z-10">
+        <header className="h-14 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-10">
           <span className="text-slate-500 text-sm font-medium">Sistem Pengukuran Literasi Digital · Kampus XYZ</span>
+          <div className="flex items-center gap-2">
+            <span className={`text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider border ${role === 'admin'
+              ? 'text-blue-700 bg-blue-50 border-blue-100'
+              : 'text-emerald-700 bg-emerald-50 border-emerald-100'
+              }`}>
+              {role}
+            </span>
+          </div>
         </header>
         <div className="p-8"> <Outlet /> </div>
       </main>
