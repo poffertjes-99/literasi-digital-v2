@@ -1,48 +1,45 @@
 /**
- * Student Email Parser for Kampus XYZ Literasi Digital System
- *
- * Expected format: NIM_Jurusan_Angkatan@domain.com
- * Example:         20230001_IF_2023@kampusxyz.ac.id
- *
- * Rules:
- *  - NIM    : one or more digits
- *  - Jurusan: one or more letters (case-insensitive)
- *  - Angkatan: exactly 4 digits
- *  - Domain : standard email domain (contains at least one dot)
+ * Universal Student Email Parser
+ * Supported format: jurusan-nim@students.ithb.ac.id (e.g., si-19031@students.ithb.ac.id)
+ * Fallback: Any valid email is accepted.
  */
 
-const EMAIL_REGEX = /^(\d+)_([A-Za-z]+)_(\d{4})@.+\..+$/;
+// Matches: si-19031@students.ithb.ac.id
+const ITHB_REGEX = /^([a-zA-Z]+)-(\d{2})(\d+)@students\.ithb\.ac\.id$/;
+// Generic email check
+const GENERIC_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-/**
- * Validates and parses a kampus student email address.
- *
- * @param {string} email - Raw email string from the input field.
- * @returns {{ valid: true, studentId: string, jurusan: string, angkatan: string }
- *          | { valid: false, message: string }}
- */
 export function parseStudentEmail(email) {
-  const trimmed = (email || '').trim();
+  const trimmed = (email || '').trim().toLowerCase();
 
   if (!trimmed) {
     return { valid: false, message: 'Email tidak boleh kosong.' };
   }
 
-  const match = trimmed.match(EMAIL_REGEX);
+  // Check if it's a valid email structure first
+  if (!GENERIC_REGEX.test(trimmed)) {
+    return { valid: false, message: 'Format email tidak valid.' };
+  }
 
-  if (!match) {
+  const ithbMatch = trimmed.match(ITHB_REGEX);
+
+  if (ithbMatch) {
+    const [, jurusan, yearShort, serial] = ithbMatch;
     return {
-      valid: false,
-      message:
-        'Format email salah. Gunakan format: NIM_Jurusan_Angkatan@domain.com (contoh: 20230001_IF_2023@kampusxyz.ac.id)',
+      valid: true,
+      studentId: `${yearShort}${serial}`, // Uses numeric part as ID
+      jurusan: jurusan.toUpperCase(),
+      angkatan: `20${yearShort}`, // e.g., 19 -> 2019
+      isInstitutional: true
     };
   }
 
-  const [, studentId, jurusan, angkatan] = match;
-
+  // FALLBACK: Allow any other email (Gmail, Outlook, etc.)
   return {
     valid: true,
-    studentId,
-    jurusan: jurusan.toUpperCase(),
-    angkatan,
+    studentId: trimmed.split('@')[0], // Use part before @ as ID
+    jurusan: 'GUEST',
+    angkatan: 'OTHER',
+    isInstitutional: false
   };
 }
