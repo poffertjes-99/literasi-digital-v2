@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { doc, getDoc, collection, getDocs, addDoc, deleteDoc, updateDoc, serverTimestamp, query, orderBy } from 'firebase/firestore';
 import { db } from '../../../firebase';
-import { GLOBAL_FRAMEWORK, calculateFrameworkCoverage } from '../../utils/scoring';
+import { PILLARS as GLOBAL_FRAMEWORK, calculateFrameworkCoverage } from '../../utils/scoring';
 import { ArrowLeft, Plus, Trash2, Loader2, HelpCircle, ChevronDown, ChevronUp, Pencil, Target, ShieldCheck } from 'lucide-react';
 
 const FRAMEWORK_AREAS = Object.values(GLOBAL_FRAMEWORK);
