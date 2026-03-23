@@ -4,9 +4,9 @@ import { db } from '../../../firebase';
 import { PILLARS, getLiteracyLevel } from '../../utils/scoring';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Legend, Cell
+  RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Cell
 } from 'recharts';
-import { BarChart2, Users, TrendingUp, ChevronDown } from 'lucide-react';
+import { BarChart2, ChevronDown } from 'lucide-react';
 
 const PILLAR_COLORS = { DSK: '#3b82f6', DET: '#10b981', DSA: '#f59e0b', DCU: '#8b5cf6' };
 
@@ -14,32 +14,62 @@ function aggregate(submissions) {
   if (!submissions.length) return { scores: { DSK: 0, DET: 0, DSA: 0, DCU: 0 }, index: 0 };
   const totals = { DSK: 0, DET: 0, DSA: 0, DCU: 0 };
   const counts = { DSK: 0, DET: 0, DSA: 0, DCU: 0 };
+
   submissions.forEach(({ scores = {} }) => {
     Object.keys(PILLARS).forEach((code) => {
-      if (scores[code] !== undefined) { totals[code] += scores[code]; counts[code]++; }
+      if (scores[code] !== undefined) {
+        totals[code] += scores[code];
+        counts[code]++;
+      }
     });
   });
+
   const avg = {};
-  Object.keys(PILLARS).forEach((code) => { avg[code] = counts[code] > 0 ? Math.round(totals[code] / counts[code]) : 0; });
+  Object.keys(PILLARS).forEach((code) => {
+    avg[code] = counts[code] > 0 ? Math.round(totals[code] / counts[code]) : 0;
+  });
+
   const index = Math.round(Object.values(avg).reduce((a, b) => a + b, 0) / 4);
   return { scores: avg, index };
 }
 
 export default function AnalyticsPage() {
   const [sessions, setSessions] = useState([]);
+  const [submissionsMap, setSubmissionsMap] = useState({});
   const [selectedId, setSelectedId] = useState('all');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getDocs(query(collection(db, 'sessions'), orderBy('createdAt', 'desc'))).then((snap) => {
-      setSessions(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
-      setLoading(false);
-    });
+    async function fetchData() {
+      try {
+        // 1. Fetch all sessions (Ordered by newest first)
+        const sessionSnap = await getDocs(query(collection(db, 'sessions'), orderBy('createdAt', 'desc')));
+        const sessionsList = sessionSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+
+        // 2. Fetch the "submissions" subcollection for EVERY session in parallel
+        const subsMap = {};
+        await Promise.all(
+          sessionsList.map(async (session) => {
+            const subSnap = await getDocs(collection(db, 'sessions', session.id, 'submissions'));
+            subsMap[session.id] = subSnap.docs.map(d => d.data());
+          })
+        );
+
+        setSessions(sessionsList);
+        setSubmissionsMap(subsMap);
+      } catch (error) {
+        console.error("Gagal memuat data analitik:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
   }, []);
 
+  // 3. Dynamically calculate which submissions to show based on the dropdown filter
   const selectedSubmissions = selectedId === 'all'
-    ? sessions.flatMap((s) => s.submissions || [])
-    : (sessions.find((s) => s.id === selectedId)?.submissions || []);
+    ? Object.values(submissionsMap).flat()
+    : (submissionsMap[selectedId] || []);
 
   const { scores, index } = aggregate(selectedSubmissions);
   const level = getLiteracyLevel(index);
@@ -49,12 +79,18 @@ export default function AnalyticsPage() {
     code,
     value: scores[code],
   }));
+
   const radarData = Object.keys(PILLARS).map((code) => ({
     pillar: code,
     value: scores[code],
   }));
 
-  const tableData = Object.keys(PILLARS).map((code) => ({ code, label: PILLARS[code].label, score: scores[code], level: getLiteracyLevel(scores[code]) }));
+  const tableData = Object.keys(PILLARS).map((code) => ({
+    code,
+    label: PILLARS[code].label,
+    score: scores[code],
+    level: getLiteracyLevel(scores[code])
+  }));
 
   if (loading) return <div className="h-96 bg-slate-100 rounded-2xl animate-pulse" />;
 
@@ -65,12 +101,13 @@ export default function AnalyticsPage() {
           <h1 className="text-2xl font-bold text-slate-800">Analytics — Index Overview</h1>
           <p className="text-slate-500 text-sm mt-1">Kalkulasi indeks literasi digital otomatis berdasarkan submission peserta</p>
         </div>
+
         {/* Session Filter */}
         <div className="relative">
           <select
             value={selectedId}
             onChange={(e) => setSelectedId(e.target.value)}
-            className="appearance-none pl-4 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer"
+            className="appearance-none pl-4 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer shadow-sm"
           >
             <option value="all">Semua Sesi</option>
             {sessions.map((s) => <option key={s.id} value={s.id}>{s.name || s.sessionCode}</option>)}
@@ -80,19 +117,21 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Index Hero Card */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white flex items-center justify-between flex-wrap gap-6">
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white flex items-center justify-between flex-wrap gap-6 shadow-lg">
         <div>
           <p className="text-blue-200 text-sm font-medium mb-1">Indeks Literasi Digital Keseluruhan</p>
-          <div className="text-7xl font-black tracking-tight">{index}<span className="text-3xl font-semibold text-blue-200">%</span></div>
+          <div className="text-7xl font-black tracking-tight">
+            {index}<span className="text-3xl font-semibold text-blue-200">%</span>
+          </div>
           <p className="text-blue-100 mt-2 font-medium">{level.label}</p>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-            <p className="text-blue-200 text-xs">Total Peserta</p>
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+            <p className="text-blue-200 text-xs uppercase tracking-wider font-semibold">Total Peserta</p>
             <p className="text-2xl font-bold mt-1">{selectedSubmissions.length}</p>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-            <p className="text-blue-200 text-xs">Sesi Dipilih</p>
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+            <p className="text-blue-200 text-xs uppercase tracking-wider font-semibold">Sesi Dipilih</p>
             <p className="text-2xl font-bold mt-1">{selectedId === 'all' ? sessions.length : 1}</p>
           </div>
         </div>
@@ -101,7 +140,7 @@ export default function AnalyticsPage() {
       {selectedSubmissions.length === 0 ? (
         <div className="bg-white rounded-2xl border border-dashed border-slate-200 p-12 text-center">
           <BarChart2 size={40} className="mx-auto text-slate-300 mb-3" />
-          <p className="text-slate-500 font-medium">Belum ada submission untuk sesi ini</p>
+          <p className="text-slate-500 font-medium">Belum ada submission untuk filter ini</p>
         </div>
       ) : (
         <>
@@ -114,7 +153,7 @@ export default function AnalyticsPage() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                   <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#64748b' }} />
                   <YAxis domain={[0, 100]} tick={{ fontSize: 10, fill: '#64748b' }} />
-                  <Tooltip formatter={(v) => [`${v}%`]} contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '12px' }} />
+                  <Tooltip cursor={{ fill: '#f8fafc' }} formatter={(v) => [`${v}%`]} contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '12px' }} />
                   <Bar dataKey="value" radius={[6, 6, 0, 0]} maxBarSize={60}>
                     {barData.map((entry) => (
                       <Cell key={entry.code} fill={PILLAR_COLORS[entry.code]} />
@@ -129,9 +168,9 @@ export default function AnalyticsPage() {
               <ResponsiveContainer width="100%" height={240}>
                 <RadarChart data={radarData}>
                   <PolarGrid stroke="#e2e8f0" />
-                  <PolarAngleAxis dataKey="pillar" tick={{ fontSize: 11, fill: '#64748b' }} />
+                  <PolarAngleAxis dataKey="pillar" tick={{ fontSize: 11, fill: '#64748b', fontWeight: 600 }} />
                   <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 9, fill: '#94a3b8' }} />
-                  <Radar name="Skor" dataKey="value" stroke="#6366f1" fill="#6366f1" fillOpacity={0.25} />
+                  <Radar name="Skor" dataKey="value" stroke="#6366f1" strokeWidth={2} fill="#6366f1" fillOpacity={0.25} />
                 </RadarChart>
               </ResponsiveContainer>
             </div>
@@ -159,10 +198,12 @@ export default function AnalyticsPage() {
                         {code}
                       </span>
                     </td>
-                    <td className="px-6 py-3.5 text-slate-700">{label}</td>
+                    <td className="px-6 py-3.5 text-slate-700 font-medium">{label}</td>
                     <td className="px-6 py-3.5 text-right font-bold text-slate-800">{score}%</td>
                     <td className="px-6 py-3.5 text-right">
-                      <span className={`text-xs font-medium ${lv.color}`}>{lv.label}</span>
+                      <span className={`text-xs font-bold px-2.5 py-1 rounded-full border ${lv.color.replace('text', 'bg').replace('600', '50')} ${lv.color} ${lv.color.replace('text', 'border').replace('600', '200')}`}>
+                        {lv.label}
+                      </span>
                     </td>
                   </tr>
                 ))}

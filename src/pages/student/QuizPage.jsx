@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import { doc, getDoc, collection, getDocs, updateDoc, arrayUnion, Timestamp } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs, setDoc, updateDoc, increment, Timestamp } from 'firebase/firestore';
 import { db } from '../../../firebase';
 import { useAuth } from '../../context/AuthContext';
 import { calculateScores } from '../../utils/scoring';
@@ -15,8 +15,8 @@ export default function QuizPage() {
   // Prefer context metadata (set by JoinPage), fall back to router state for resilience
   const sessionId = studentMeta?.sessionId || state?.sessionId;
   const studentId = studentMeta?.studentId || 'N/A';
-  const jurusan   = studentMeta?.jurusan   || 'N/A';
-  const angkatan  = studentMeta?.angkatan  || 'N/A';
+  const jurusan = studentMeta?.jurusan || 'N/A';
+  const angkatan = studentMeta?.angkatan || 'N/A';
   const studentName = studentId !== 'N/A' ? `${studentId} (${jurusan} ${angkatan})` : 'Peserta';
 
   const [session, setSession] = useState(null);
@@ -68,8 +68,7 @@ export default function QuizPage() {
       setSubmitting(true);
       try {
         const { scores, overallIndex } = calculateScores(newAnswers);
-        // Note: serverTimestamp() is NOT allowed inside arrayUnion().
-        // Timestamp.now() is the correct approach for array elements.
+
         const submission = {
           studentId,
           jurusan,
@@ -78,12 +77,24 @@ export default function QuizPage() {
           submittedAt: Timestamp.now(),
           scores,
           overallIndex,
+          rawAnswers: newAnswers
         };
-        await updateDoc(doc(db, 'sessions', sessionId), {
-          submissions: arrayUnion(submission),
+
+        // 🚨 NEW SCALABLE SAVE LOGIC 🚨
+
+        // 1. Save the individual submission using the NIM as the Document ID
+        const submissionRef = doc(db, 'sessions', sessionId, 'submissions', studentId);
+        await setDoc(submissionRef, submission);
+
+        // 2. Increment a counter on the main session document (for the Admin page to read easily)
+        const sessionRef = doc(db, 'sessions', sessionId);
+        await updateDoc(sessionRef, {
+          submissionCount: increment(1)
         });
+
         clearStudentSession();
-        navigate('/results', { state: { scores, overallIndex, studentId, jurusan, angkatan } });
+        // Pass the sessionId forward so the results page can refetch if refreshed
+        navigate('/results', { state: { scores, overallIndex, studentId, jurusan, angkatan, sessionId } });
       } catch (e) {
         setError('Gagal mengirim jawaban. Coba lagi.');
         setSubmitting(false);
@@ -165,15 +176,13 @@ export default function QuizPage() {
               <button
                 key={i}
                 onClick={() => handleSelect(i)}
-                className={`w-full text-left flex items-start gap-4 p-4 rounded-2xl border-2 transition-all duration-200 ${
-                  selected === i
-                    ? 'border-blue-500 bg-blue-50 shadow-md scale-[1.01]'
-                    : 'border-slate-100 bg-white hover:border-blue-200 hover:bg-blue-50/50 shadow-sm'
-                }`}
+                className={`w-full text-left flex items-start gap-4 p-4 rounded-2xl border-2 transition-all duration-200 ${selected === i
+                  ? 'border-blue-500 bg-blue-50 shadow-md scale-[1.01]'
+                  : 'border-slate-100 bg-white hover:border-blue-200 hover:bg-blue-50/50 shadow-sm'
+                  }`}
               >
-                <div className={`w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold border-2 mt-0.5 transition-colors ${
-                  selected === i ? 'bg-blue-500 border-blue-500 text-white' : 'bg-white border-slate-200 text-slate-500'
-                }`}>
+                <div className={`w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold border-2 mt-0.5 transition-colors ${selected === i ? 'bg-blue-500 border-blue-500 text-white' : 'bg-white border-slate-200 text-slate-500'
+                  }`}>
                   {charLabels[i]}
                 </div>
                 <span className={`flex-1 text-sm leading-relaxed ${selected === i ? 'text-blue-800 font-medium' : 'text-slate-700'}`}>

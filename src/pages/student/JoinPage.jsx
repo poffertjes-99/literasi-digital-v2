@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../firebase';
 import { useAuth } from '../../context/AuthContext';
 import { parseStudentEmail } from '../../utils/studentEmailParser';
@@ -50,6 +50,7 @@ export default function JoinPage() {
 
       const sessionDoc = snap.docs[0];
       const session = sessionDoc.data();
+      const sessionId = sessionDoc.id;
 
       // Step 3 – Status must be exactly 'active'
       if (session.status !== 'active') {
@@ -57,8 +58,16 @@ export default function JoinPage() {
         return;
       }
 
+      // 🚨 ANTI-CHEATING CHECK: Does this NIM already have a submission?
+      const submissionRef = doc(db, 'sessions', sessionId, 'submissions', parsed.studentId);
+      const submissionSnap = await getDoc(submissionRef);
+
+      if (submissionSnap.exists()) {
+        setError(`Akses Ditolak: NIM ${parsed.studentId} sudah menyelesaikan ujian untuk sesi ini.`);
+        return;
+      }
+
       // Step 4 – All good: register student session in context
-      const sessionId = sessionDoc.id;
       const sessionCode = code.trim().toUpperCase();
 
       setStudentSession({
@@ -106,7 +115,6 @@ export default function JoinPage() {
           <p className="text-blue-200 text-sm mb-6">Gunakan email kampus dan kode sesi dari dosen Anda.</p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-
             {/* Kampus Email */}
             <div>
               <label className="block text-xs font-semibold text-blue-100 mb-1.5 flex items-center gap-1.5">

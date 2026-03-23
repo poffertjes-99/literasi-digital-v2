@@ -1,20 +1,29 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { PILLARS, getLiteracyLevel } from '../../utils/scoring';
-import { RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
-import { CheckCircle2, ShieldCheck } from 'lucide-react';
+import { Award, ArrowLeft, ShieldCheck, Printer, AlertCircle } from 'lucide-react';
 
 export default function ResultPage() {
   const { state } = useLocation();
+  const navigate = useNavigate();
 
-  // If navigated here directly without state, show fallback
-  if (!state?.scores) {
+  // 🚨 THE SHIELD: If they access this link directly without taking the quiz, prevent the crash
+  if (!state || !state.scores) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
-        <div className="bg-white rounded-2xl p-8 text-center shadow border border-slate-100 max-w-sm">
-          <p className="text-slate-500 mb-4">Tidak ada hasil untuk ditampilkan.</p>
-          <a href="/join" className="text-blue-600 text-sm hover:underline">
-            Kembali ke halaman masuk →
-          </a>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-3xl shadow-xl border border-slate-100 p-8 text-center max-w-md w-full">
+          <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <AlertCircle size={32} className="text-amber-600" />
+          </div>
+          <h2 className="text-xl font-bold text-slate-800 mb-2">Sesi Telah Berakhir</h2>
+          <p className="text-slate-500 text-sm mb-6">
+            Hasil ujian tidak ditemukan atau Anda mengakses tautan ini secara langsung. Silakan masuk kembali menggunakan kode sesi.
+          </p>
+          <button
+            onClick={() => navigate('/join')}
+            className="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors"
+          >
+            Kembali ke Halaman Masuk
+          </button>
         </div>
       </div>
     );
@@ -22,121 +31,112 @@ export default function ResultPage() {
 
   const { scores, overallIndex, studentId, jurusan, angkatan } = state;
   const level = getLiteracyLevel(overallIndex);
-  const displayName = studentId && studentId !== 'N/A'
-    ? `${studentId} · ${jurusan} ${angkatan}`
-    : 'Peserta';
 
-  const radarData = Object.keys(PILLARS).map((code) => ({
-    pillar: PILLARS[code].label,
-    value: scores[code] || 0,
-  }));
-
-  const getScoreColor = (score) => {
-    if (score >= 80) return 'text-emerald-600';
-    if (score >= 65) return 'text-blue-600';
-    if (score >= 50) return 'text-amber-600';
-    return 'text-red-500';
+  const handlePrint = () => {
+    window.print();
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-      {/* Header */}
-      <header className="bg-white border-b border-slate-100 shadow-sm">
-        <div className="max-w-2xl mx-auto px-6 py-4 flex items-center gap-2">
-          <ShieldCheck size={18} className="text-blue-600" />
-          <span className="text-sm font-semibold text-slate-700">Literasi Digital · Kampus XYZ</span>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4 md:p-8 flex justify-center items-start print:bg-white print:p-0">
+      <div className="w-full max-w-2xl bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden print:shadow-none print:border-none print:rounded-none">
 
-      <main className="max-w-2xl mx-auto px-4 py-10 space-y-6">
-        {/* Success Banner */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 text-center">
-          <div className="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
-            <CheckCircle2 size={28} className="text-emerald-600" />
+        {/* Header - Brand */}
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-8 text-center text-white print:bg-white print:text-slate-800 print:border-b print:border-slate-200">
+          <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 backdrop-blur-sm print:bg-blue-100 print:text-blue-600">
+            <ShieldCheck size={32} className="print:text-blue-600" />
           </div>
-          <h1 className="text-xl font-bold text-slate-800">Ujian Selesai!</h1>
-          <p className="text-slate-500 text-sm mt-1">
-            Jawaban Anda telah berhasil disimpan.
-          </p>
-          {studentId && studentId !== 'N/A' && (
-            <div className="mt-3 inline-flex items-center gap-2 bg-blue-50 border border-blue-100 rounded-xl px-4 py-2 text-xs text-blue-700 font-medium">
-              <span>NIM: <strong>{studentId}</strong></span>
-              <span className="text-blue-300">·</span>
-              <span>{jurusan}</span>
-              <span className="text-blue-300">·</span>
-              <span>Angkatan {angkatan}</span>
+          <h1 className="text-2xl font-bold tracking-tight mb-1">Hasil Pengukuran Literasi Digital</h1>
+          <p className="text-blue-200 text-sm print:text-slate-500">Kampus XYZ · Tahun Akademik {angkatan}</p>
+        </div>
+
+        <div className="p-8">
+          {/* Student Info Card */}
+          <div className="bg-slate-50 rounded-2xl p-5 mb-8 border border-slate-100 flex flex-col md:flex-row justify-between md:items-center gap-4 print:bg-white print:border-slate-200">
+            <div>
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Identitas Peserta</p>
+              <p className="text-lg font-bold text-slate-800">{studentId}</p>
+              <p className="text-sm text-slate-600">Program Studi {jurusan}</p>
             </div>
-          )}
-        </div>
-
-        {/* Overall Index Hero */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white text-center shadow-lg">
-          <p className="text-blue-200 text-sm font-medium mb-1">Indeks Literasi Digital Anda</p>
-          <div className="text-8xl font-black tracking-tight mt-2">
-            {overallIndex}<span className="text-4xl text-blue-200">%</span>
+            <div className="text-left md:text-right">
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Waktu Penyelesaian</p>
+              <p className="text-sm font-medium text-slate-800">
+                {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+              </p>
+            </div>
           </div>
-          <p className={`mt-3 text-lg font-bold ${level.color.replace('text-', 'text-')} bg-white/15 inline-block px-4 py-1 rounded-full`}>
-            {level.label}
-          </p>
-        </div>
 
-        {/* Pillar Score Cards */}
-        <div className="grid grid-cols-2 gap-3">
-          {Object.keys(PILLARS).map((code) => {
-            const pillar = PILLARS[code];
-            const score = scores[code] || 0;
-            const pillarlevel = getLiteracyLevel(score);
-            return (
-              <div key={code} className={`bg-white rounded-2xl border-2 ${pillar.borderColor} p-5 shadow-sm flex flex-col`}>
-                <div className={`inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full ${pillar.bgColor} ${pillar.textColor} self-start mb-3`}>
-                  {code}
-                </div>
-                <p className="text-xs text-slate-500 mb-0.5">{pillar.label}</p>
-                <p className={`text-3xl font-black ${getScoreColor(score)}`}>{score}<span className="text-base font-medium text-slate-400">%</span></p>
-                <p className={`text-xs font-medium mt-1 ${pillarlevel.color}`}>{pillarlevel.label}</p>
-                {/* Mini progress bar */}
-                <div className="mt-3 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${score}%`, backgroundColor: pillar.color }} />
-                </div>
+          {/* Main Score Area */}
+          <div className="flex flex-col items-center justify-center text-center mb-10">
+            <div className="relative">
+              <svg className="w-40 h-40 transform -rotate-90">
+                <circle cx="80" cy="80" r="70" className="stroke-slate-100" strokeWidth="12" fill="none" />
+                <circle
+                  cx="80" cy="80" r="70"
+                  className={`stroke-current ${level.color}`}
+                  strokeWidth="12"
+                  fill="none"
+                  strokeDasharray="439.8"
+                  strokeDashoffset={439.8 - (439.8 * overallIndex) / 100}
+                  strokeLinecap="round"
+                />
+              </svg>
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+                <span className="text-4xl font-black text-slate-800">{overallIndex}</span>
+                <span className="text-sm font-bold text-slate-400 block mt-[-4px]">/ 100</span>
               </div>
-            );
-          })}
-        </div>
-
-        {/* Radar Chart */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
-          <h2 className="text-sm font-semibold text-slate-700 mb-1">Profil Literasi Digital Anda</h2>
-          <p className="text-xs text-slate-400 mb-4">Visualisasi keseimbangan 4 pilar kompetensi</p>
-          <ResponsiveContainer width="100%" height={240}>
-            <RadarChart data={radarData}>
-              <PolarGrid stroke="#e2e8f0" />
-              <PolarAngleAxis dataKey="pillar" tick={{ fontSize: 10, fill: '#64748b' }} />
-              <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 9, fill: '#94a3b8' }} />
-              <Radar name="Skor" dataKey="value" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.3} strokeWidth={2} />
-            </RadarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Legenda Pilar */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
-          <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Keterangan Pilar</h2>
-          <div className="space-y-2">
-            {Object.keys(PILLARS).map((code) => (
-              <div key={code} className="flex items-center gap-3">
-                <span className={`text-xs font-bold px-2 py-0.5 rounded-md ${PILLARS[code].bgColor} ${PILLARS[code].textColor}`}>{code}</span>
-                <span className="text-sm text-slate-600">{PILLARS[code].label}</span>
-              </div>
-            ))}
+            </div>
+            <div className={`mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full ${level.color.replace('text', 'bg').replace('600', '50')} border border-current border-opacity-20`}>
+              <Award size={18} className={level.color} />
+              <span className={`font-bold text-sm ${level.color}`}>Predikat: {level.label}</span>
+            </div>
           </div>
-        </div>
 
-        {/* CTA */}
-        <div className="text-center pt-2 pb-8">
-          <p className="text-slate-400 text-xs">
-            Hasil ini telah dicatat oleh sistem. Silakan tutup halaman ini.
-          </p>
+          {/* Pillars Breakdown */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-bold text-slate-800 mb-3 border-b border-slate-100 pb-2">Rincian per Pilar</h3>
+            {Object.entries(scores).map(([code, score]) => {
+              const pillar = PILLARS[code];
+              if (!pillar) return null; // Safety check
+              return (
+                <div key={code} className="flex items-center gap-4">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm ${pillar.bgColor} ${pillar.textColor}`}>
+                    {code}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex justify-between items-end mb-1">
+                      <span className="text-sm font-semibold text-slate-700">{pillar.label}</span>
+                      <span className="text-sm font-bold text-slate-800">{score}%</span>
+                    </div>
+                    <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all duration-1000 ${pillar.bgColor.replace('100', '500')}`}
+                        style={{ width: `${score}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Actions - Hidden when printing */}
+          <div className="mt-10 pt-6 border-t border-slate-100 flex flex-col sm:flex-row gap-3 print:hidden">
+            <button
+              onClick={() => navigate('/join')}
+              className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-xl font-semibold transition-colors"
+            >
+              <ArrowLeft size={18} /> Selesai
+            </button>
+            <button
+              onClick={handlePrint}
+              className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-colors shadow-sm"
+            >
+              <Printer size={18} /> Cetak Hasil (PDF)
+            </button>
+          </div>
+
         </div>
-      </main>
+      </div>
     </div>
   );
 }
