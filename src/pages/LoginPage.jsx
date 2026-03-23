@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { signInWithPopup, signOut } from 'firebase/auth'; // Added signOut for cleanup
-import { doc, getDoc } from 'firebase/firestore'; // Added Firestore lookups
+import { signInWithPopup, signOut } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
-import { auth, db, googleProvider } from '../../firebase'; // Added db import
-import { ShieldCheck, LogIn, BookOpen, AlertCircle } from 'lucide-react'; // Added AlertCircle icon
+import { auth, db, googleProvider } from '../../firebase';
+import { ShieldCheck, BookOpen, AlertCircle } from 'lucide-react';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -15,6 +15,11 @@ export default function LoginPage() {
     setError('');
 
     try {
+      // 🚨 THE FIX: Force Google to show the Account Chooser pop-up
+      googleProvider.setCustomParameters({
+        prompt: 'select_account'
+      });
+
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
 
@@ -23,9 +28,13 @@ export default function LoginPage() {
       const adminRef = doc(db, 'admins', user.email.toLowerCase());
       const adminSnap = await getDoc(adminRef);
 
-      if (!adminSnap.exists()) {
-        // If the email is not in the whitelist, show error and sign out immediately
-        setError('Akses Ditolak: Email Anda tidak terdaftar sebagai Admin.');
+      // We also check the 'management' collection if they aren't an admin
+      const managementRef = doc(db, 'management', user.email.toLowerCase());
+      const managementSnap = await getDoc(managementRef);
+
+      if (!adminSnap.exists() && !managementSnap.exists()) {
+        // If the email is not in either whitelist, show error and sign out immediately
+        setError('Akses Ditolak: Email Anda tidak terdaftar dalam sistem Admin/Management.');
         await signOut(auth); // Ensure they are not left in a "half-logged" state
         return;
       }
@@ -43,16 +52,13 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
-      {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 rounded-full opacity-50 blur-3xl" />
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-indigo-100 rounded-full opacity-50 blur-3xl" />
       </div>
 
       <div className="relative w-full max-w-md">
-        {/* Card */}
         <div className="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
-          {/* Header Band */}
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-8 text-white text-center">
             <div className="flex justify-center mb-4">
               <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
@@ -63,7 +69,6 @@ export default function LoginPage() {
             <p className="text-blue-100 text-sm mt-1">Sistem Pengukuran Literasi Digital</p>
           </div>
 
-          {/* Body */}
           <div className="px-8 py-8">
             <div className="mb-6 text-center">
               <h2 className="text-lg font-semibold text-slate-800">Admin Console</h2>
@@ -72,7 +77,6 @@ export default function LoginPage() {
               </p>
             </div>
 
-            {/* Error Message Display */}
             {error && (
               <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm flex items-start gap-3">
                 <AlertCircle size={18} className="mt-0.5 flex-shrink-0" />
@@ -108,7 +112,6 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Footer */}
           <div className="bg-slate-50 px-8 py-4 border-t border-slate-100 flex items-center justify-center gap-2 text-slate-400 text-xs font-medium">
             <BookOpen size={12} />
             <span>Kampus XYZ</span>
