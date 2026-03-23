@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { doc, getDoc, collection, getDocs, addDoc, deleteDoc, updateDoc, serverTimestamp, query, orderBy } from 'firebase/firestore';
 import { db } from '../../../firebase';
-import { PILLARS as GLOBAL_FRAMEWORK, calculateFrameworkCoverage } from '../../utils/scoring';
+import { PILLARS, calculateFrameworkCoverage } from '../../utils/scoring';
 import { ArrowLeft, Plus, Trash2, Loader2, HelpCircle, ChevronDown, ChevronUp, Pencil, Target, ShieldCheck } from 'lucide-react';
 
-const FRAMEWORK_AREAS = Object.values(GLOBAL_FRAMEWORK);
+const FRAMEWORK_AREAS = Object.values(PILLARS);
 
 const emptyQuestion = () => ({
   text: '',
-  areaCode: '1', // Default to Information Literacy
+  areaCode: '1',
   competencyCode: '1.1',
   options: [
     { text: '', weight: 1 },
@@ -48,9 +48,9 @@ export default function ModuleDetailPage() {
   // Handle auto-select first competency when area changes
   useEffect(() => {
     if (!editingId) {
-      const selectedArea = FRAMEWORK_AREAS.find(a => a.code === form.areaCode);
-      if (selectedArea && selectedArea.competencies.length > 0) {
-        setForm(prev => ({ ...prev, competencyCode: selectedArea.competencies[0].code }));
+      const selectedArea = PILLARS[form.areaCode]; // 🚨 FIXED ACCESS
+      if (selectedArea && selectedArea.indicators.length > 0) {
+        setForm(prev => ({ ...prev, competencyCode: selectedArea.indicators[0].code }));
       }
     }
   }, [form.areaCode, editingId]);
@@ -191,7 +191,7 @@ export default function ModuleDetailPage() {
                   onChange={(e) => setForm({ ...form, competencyCode: e.target.value })}
                   className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-700"
                 >
-                  {GLOBAL_FRAMEWORK[`AREA_${form.areaCode}`]?.competencies.map((comp) => (
+                  {PILLARS[form.areaCode]?.indicators.map((comp) => (
                     <option key={comp.code} value={comp.code}>{comp.code}: {comp.label}</option>
                   ))}
                 </select>
@@ -243,7 +243,7 @@ export default function ModuleDetailPage() {
           </div>
         ) : (
           questions.map((q, idx) => {
-            const area = Object.values(GLOBAL_FRAMEWORK).find(a => a.code === q.areaCode);
+            const area = PILLARS[q.areaCode];
             const isExpanded = expandedId === q.id;
             return (
               <div key={q.id} className={`bg-white rounded-3xl border border-slate-100 transition-all ${isExpanded ? 'ring-2 ring-blue-500/10 shadow-xl' : 'hover:shadow-md shadow-sm'}`}>
