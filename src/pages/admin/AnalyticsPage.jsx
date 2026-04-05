@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../../../firebase';
 import { KOMDIGI_FRAMEWORK, getLiteracyLevel } from '../../utils/scoring';
@@ -6,15 +6,14 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Cell,
 } from 'recharts';
-import { BarChart2, ChevronDown, Loader2 } from 'lucide-react';
+import { BarChart2, ChevronDown, Loader2, AlertTriangle, RefreshCw } from 'lucide-react';
 
-// KOMDIGI 4-pillar keys — must match the `scores` field written by QuizPage
+// Module-level constants — defined once, never recreated
 const KOMDIGI_KEYS = Object.keys(KOMDIGI_FRAMEWORK); // ['DSK','DET','DSA','DCU']
-
 const PILLAR_COLORS = { DSK: '#3b82f6', DET: '#10b981', DSA: '#f59e0b', DCU: '#8b5cf6' };
 
 // ──────────────────────────────────────────────────────────────────────────────
-// aggregate — Compute avg pillar scores + overall index from a submissions array
+// aggregate — Pure function: computes avg KOMDIGI pillar scores from submissions
 // ──────────────────────────────────────────────────────────────────────────────
 function aggregate(submissions) {
   if (!submissions || submissions.length === 0) {
@@ -59,95 +58,136 @@ function aggregate(submissions) {
 
 // ──────────────────────────────────────────────────────────────────────────────
 // AnalyticsPage
-// Strategy: fetch ONLY the sessions list on mount (cheap).  When the admin
-// selects a specific session from the dropdown, fetch that session's submissions
-// subcollection on demand.  The "All Sessions" view pre-fetches all
-// subcollections once (triggered by the initial mount after sessions load).
-// This eliminates the N+1 read storm that previously fired unconditionally.
+//
+// Fetch strategy (cost-optimised):
+//   • Sessions list: fetched once on mount.
+//   • Submissions:   fetched lazily, keyed by session ID in an in-memory cache
+//     (submissionsCacheRef).  A React ref is used as the cache backing store so
+//     that useCallback functions always read the LATEST cache value without
+//     needing it in their dependency arrays — this is the correct pattern to
+//     avoid both stale-closure bugs and unnecessary re-creation of callbacks.
+//   • A mounted-flag ref prevents setState calls after unmount (memory-leak
+//     guard for the async Firestore fetches).
 // ──────────────────────────────────────────────────────────────────────────────
 export default function AnalyticsPage() {
   const [sessions, setSessions] = useState([]);
-  // Cache so repeated dropdown changes don't re-fetch already-loaded data
-  const [submissionsCache, setSubmissionsCache] = useState({});
+  // Trigger re-renders when the cache changes (ref alone won't trigger renders)
+  const [cacheVersion, setCacheVersion] = useState(0);
   const [selectedId, setSelectedId] = useState('all');
   const [loadingSessions, setLoadingSessions] = useState(true);
   const [loadingSubmissions, setLoadingSubmissions] = useState(false);
+  const [fetchError, setFetchError] = useState(null);
 
-  // Determine which submission docs contribute to the current view
-  const selectedSubmissions =
-    selectedId === 'all'
-      ? Object.values(submissionsCache).flat()
-      : (submissionsCache[selectedId] || []);
+  // ✅ FIX 1: Use a ref as the cache backing store so callbacks always read the
+  //    latest data without listing it in their dependency arrays.
+  //    This eliminates the stale-closure risk AND the infinite-loop risk that
+  //    would arise from `[submissionsCache]` in useCallback deps.
+  const submissionsCacheRef = useRef({});
+
+  // ✅ FIX 2: Unmount guard — prevents calling setState on an unmounted component
+  //    (which fires when the admin navigates away while a Firestore fetch is in
+  //    flight).
+  const mountedRef = useRef(true);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => { mountedRef.current = false; };
+  }, []);
 
   // ── Step 1: Load sessions list on mount ──────────────────────────────────
   useEffect(() => {
+    let cancelled = false; // local cancellation flag for this specific effect run
     async function fetchSessions() {
+      setFetchError(null);
       try {
         const snap = await getDocs(
           query(collection(db, 'sessions'), orderBy('createdAt', 'desc')),
         );
-        setSessions(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+        if (!cancelled && mountedRef.current) {
+          setSessions(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+        }
       } catch (err) {
-        console.error('Failed to load sessions:', err);
+        console.error('AnalyticsPage: Failed to load sessions:', err);
+        if (!cancelled && mountedRef.current) {
+          setFetchError('Gagal memuat daftar sesi. Periksa koneksi internet Anda.');
+        }
       } finally {
-        setLoadingSessions(false);
+        if (!cancelled && mountedRef.current) {
+          setLoadingSessions(false);
+        }
       }
     }
     fetchSessions();
+    return () => { cancelled = true; }; // cleanup if component remounts
   }, []);
 
-  // ── Step 2: Fetch submissions for the selected session (lazy) ────────────
-  const fetchSubmissionsForSession = useCallback(
-    async (sessionId) => {
-      // Already cached — skip the network round-trip
-      if (submissionsCache[sessionId] !== undefined) return;
+  // ── Step 2: Core fetch function (stable reference — no deps on cache) ─────
+  // ✅ FIX 3: Empty dep array [] — the function reads submissionsCacheRef.current
+  //    directly (always fresh) instead of closing over a stale state snapshot.
+  const fetchSubmissionsForSession = useCallback(async (sessionId) => {
+    // Already cached — skip the network round-trip
+    if (submissionsCacheRef.current[sessionId] !== undefined) return;
 
-      setLoadingSubmissions(true);
-      try {
-        const snap = await getDocs(
-          collection(db, 'sessions', sessionId, 'submissions'),
-        );
-        const docs = snap.docs.map((d) => d.data());
-        setSubmissionsCache((prev) => ({ ...prev, [sessionId]: docs }));
-      } catch (err) {
-        console.error(`Failed to load submissions for session ${sessionId}:`, err);
-      } finally {
-        setLoadingSubmissions(false);
+    try {
+      const snap = await getDocs(
+        collection(db, 'sessions', sessionId, 'submissions'),
+      );
+      if (!mountedRef.current) return; // unmounted during fetch — discard result
+      const docs = snap.docs.map((d) => d.data());
+      submissionsCacheRef.current = { ...submissionsCacheRef.current, [sessionId]: docs };
+      setCacheVersion((v) => v + 1); // trigger re-render with the new cache data
+    } catch (err) {
+      console.error(`AnalyticsPage: Failed to load submissions for ${sessionId}:`, err);
+      if (mountedRef.current) {
+        setFetchError(`Gagal memuat submission untuk sesi ${sessionId}.`);
       }
-    },
-    [submissionsCache],
-  );
+    }
+  }, []); // ✅ stable — no deps needed because we read from ref, not state
 
   // ── Step 3: Handle dropdown change ───────────────────────────────────────
-  const handleSessionChange = useCallback(
-    async (id) => {
-      setSelectedId(id);
+  // ✅ FIX 4: `sessions` is the only real dependency here. `submissionsCacheRef`
+  //    is a ref (stable identity), so it doesn't need to be listed.
+  const handleSessionChange = useCallback(async (id) => {
+    setSelectedId(id);
+    setFetchError(null);
+    setLoadingSubmissions(true);
+    try {
       if (id === 'all') {
-        // Fetch all sessions that haven't been cached yet
-        setLoadingSubmissions(true);
-        try {
-          const missing = sessions.filter((s) => submissionsCache[s.id] === undefined);
-          await Promise.all(missing.map((s) => fetchSubmissionsForSession(s.id)));
-        } finally {
-          setLoadingSubmissions(false);
-        }
+        // Fetch only sessions not yet in the cache
+        const missing = sessions.filter(
+          (s) => submissionsCacheRef.current[s.id] === undefined,
+        );
+        await Promise.all(missing.map((s) => fetchSubmissionsForSession(s.id)));
       } else {
         await fetchSubmissionsForSession(id);
       }
-    },
-    [sessions, submissionsCache, fetchSubmissionsForSession],
-  );
+    } finally {
+      if (mountedRef.current) setLoadingSubmissions(false);
+    }
+  }, [sessions, fetchSubmissionsForSession]); // ✅ correct — no cache state dep
 
-  // ── Step 4: Auto-load first session on initial data arrival ──────────────
+  // ── Step 4: Auto-load "all" view after sessions are first fetched ─────────
+  // The eslint-disable is intentional: we only want this to fire when `sessions`
+  // changes (i.e., data first arrives), NOT every time handleSessionChange
+  // changes identity. handleSessionChange IS stable (fixed deps above), but
+  // we keep the comment to be explicit for future maintainers.
   useEffect(() => {
     if (sessions.length > 0 && selectedId === 'all') {
-      // Kick off a background fetch for "all" view so charts populate immediately
       handleSessionChange('all');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessions]);
+  }, [sessions]); // intentional: only react to sessions arriving
 
-  // ── Derived chart data ────────────────────────────────────────────────────
+  // ── Derived data (computed each render from the ref snapshot) ────────────
+  // `cacheVersion` is intentionally read here to force re-evaluation after
+  // the ref is mutated — this is the correct ref+version pattern.
+  void cacheVersion; // suppress unused-var lint warnings
+  const cache = submissionsCacheRef.current;
+
+  const selectedSubmissions =
+    selectedId === 'all'
+      ? Object.values(cache).flat()
+      : (cache[selectedId] || []);
+
   const { scores, index } = aggregate(selectedSubmissions);
   const level = getLiteracyLevel(index);
 
@@ -169,8 +209,24 @@ export default function AnalyticsPage() {
     level: getLiteracyLevel(scores[code]),
   }));
 
+  // ── Render states ─────────────────────────────────────────────────────────
   if (loadingSessions) {
     return <div className="h-96 bg-slate-100 rounded-2xl animate-pulse" />;
+  }
+
+  if (fetchError && sessions.length === 0) {
+    return (
+      <div className="bg-white rounded-2xl border border-red-100 p-12 text-center">
+        <AlertTriangle size={40} className="mx-auto text-red-400 mb-3" />
+        <p className="text-slate-700 font-semibold">{fetchError}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 bg-slate-800 text-white text-sm font-bold rounded-xl hover:bg-black transition-colors"
+        >
+          <RefreshCw size={14} /> Muat Ulang
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -189,7 +245,8 @@ export default function AnalyticsPage() {
             id="session-filter"
             value={selectedId}
             onChange={(e) => handleSessionChange(e.target.value)}
-            className="appearance-none pl-4 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer shadow-sm"
+            disabled={loadingSubmissions}
+            className="appearance-none pl-4 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <option value="all">Semua Sesi</option>
             {sessions.map((s) => (
@@ -202,11 +259,25 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
+      {/* Non-blocking per-session error banner */}
+      {fetchError && (
+        <div className="flex items-center gap-3 bg-red-50 border border-red-100 rounded-xl px-4 py-3 text-sm text-red-700">
+          <AlertTriangle size={16} className="flex-shrink-0" />
+          <span>{fetchError}</span>
+          <button
+            onClick={() => setFetchError(null)}
+            className="ml-auto text-red-400 hover:text-red-600 font-bold"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       {/* Index Hero Card */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white flex items-center justify-between flex-wrap gap-6 shadow-lg">
         <div>
           <p className="text-blue-200 text-sm font-medium mb-1">Indeks Literasi Digital Keseluruhan</p>
-          <div className="text-7xl font-black tracking-tight">
+          <div className="text-7xl font-black tracking-tight min-h-[72px] flex items-center">
             {loadingSubmissions ? (
               <Loader2 size={48} className="animate-spin text-blue-200" />
             ) : (
@@ -235,6 +306,11 @@ export default function AnalyticsPage() {
         <div className="bg-white rounded-2xl border border-dashed border-slate-200 p-12 text-center">
           <BarChart2 size={40} className="mx-auto text-slate-300 mb-3" />
           <p className="text-slate-500 font-medium">Belum ada submission untuk filter ini</p>
+          <p className="text-slate-400 text-sm mt-1">
+            {selectedId === 'all'
+              ? 'Bagikan kode sesi kepada peserta untuk mulai mengumpulkan data.'
+              : 'Sesi ini belum memiliki peserta yang menyelesaikan kuis.'}
+          </p>
         </div>
       ) : (
         <>
