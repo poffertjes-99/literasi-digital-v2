@@ -66,14 +66,18 @@ export default function QuizPage() {
     } else {
       setSubmitting(true);
       try {
-        const { scores, overallIndex } = calculateScores(newAnswers);
+        const { komdigiScores, areaScores, overallIndex } = calculateScores(newAnswers);
 
-        // 🚨 FIX: Bersihkan ID dari "/" untuk mencegah error 5 segmen
+        // Sanitise studentId: remove '/' and other Firestore-illegal chars
         const safeId = studentId.replace(/[^a-zA-Z0-9_-]/g, '_');
 
         const submission = {
           studentId, jurusan, angkatan,
-          scores, overallIndex,
+          // komdigiScores is keyed DSK/DET/DSA/DCU — used by admin analytics
+          scores: komdigiScores,
+          // areaScores is keyed '0'–'6' — stored for potential UNESCO breakdown views
+          areaScores,
+          overallIndex,
           submittedAt: serverTimestamp(),
           rawAnswers: newAnswers
         };
@@ -86,7 +90,7 @@ export default function QuizPage() {
           submissionCount: increment(1)
         });
 
-        navigate('/results', { state: { scores, overallIndex, studentId } });
+        navigate('/results', { state: { scores: komdigiScores, overallIndex, studentId } });
       } catch (e) {
         console.error("Submission failed:", e);
         setError('Gagal mengirim jawaban: ' + e.message);

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { getLiteracyLevel, PILLARS } from '../../utils/scoring';
+import { getLiteracyLevel, KOMDIGI_FRAMEWORK } from '../../utils/scoring';
 import { CheckCircle2, ArrowRight } from 'lucide-react';
 
 export default function ResultPage() {
@@ -48,12 +48,12 @@ export default function ResultPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {Object.entries(scores).map(([code, score]) => {
-            const pillar = PILLARS[code];
+            const pillar = KOMDIGI_FRAMEWORK[code];
             return (
               <div key={code} className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-blue-200 transition-colors">
                 <div className="space-y-1">
-                  <div className="text-[10px] font-black text-slate-400 uppercase">Area Global {code}</div>
-                  <div className="text-sm font-bold text-slate-700">{pillar?.label}</div>
+                  <div className="text-[10px] font-black text-slate-400 uppercase">🇮🇩 Pilar Nasional</div>
+                  <div className="text-sm font-bold text-slate-700">{pillar?.label ?? code}</div>
                 </div>
                 <div className="text-2xl font-black text-slate-800">{score}%</div>
               </div>
