@@ -1,12 +1,17 @@
 import { useState, useEffect } from 'react';
 import { collection, getDocs, addDoc, deleteDoc, updateDoc, doc, serverTimestamp, query, orderBy } from 'firebase/firestore';
 import { db } from '../../../firebase';
+import { useAuth } from '../../context/AuthContext';
 import { PILLARS, generateSessionCode } from '../../utils/scoring';
-import { Wifi, Plus, Trash2, Loader2, Play, CircleSlash, ExternalLink, Calendar, Users } from 'lucide-react';
+import { Wifi, Plus, Trash2, Loader2, Play, CircleSlash, ExternalLink, Calendar, Users, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function SessionsPage() {
   const navigate = useNavigate();
+  const { role } = useAuth();
+  // Only full admins may create sessions, toggle status, or delete
+  const canWrite = role === 'admin';
+
   const [sessions, setSessions] = useState([]);
   const [modules, setModules] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -84,15 +89,25 @@ export default function SessionsPage() {
           <h1 className="text-2xl font-bold text-slate-800">Sesi Ujian</h1>
           <p className="text-slate-500 text-sm mt-1">Kelola akses dan kode masuk untuk peserta kuis</p>
         </div>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200"
-        >
-          {showForm ? 'Batal' : <><Plus size={16} /> Buka Sesi Baru</>}
-        </button>
+        {/* 🔒 Create session – admin only */}
+        {canWrite && (
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200"
+          >
+            {showForm ? 'Batal' : <><Plus size={16} /> Buka Sesi Baru</>}
+          </button>
+        )}
+        {/* 👁 Read-only badge for management users */}
+        {!canWrite && (
+          <span className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 text-slate-500 rounded-xl text-xs font-semibold">
+            <Eye size={13} /> Tampilan Saja
+          </span>
+        )}
       </div>
 
-      {showForm && (
+      {/* Session creation form – admin only */}
+      {canWrite && showForm && (
         <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6 animate-in fade-in slide-in-from-top-4 duration-300">
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
@@ -162,19 +177,21 @@ export default function SessionsPage() {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    {/* Status Toggle */}
-                    <button
-                      onClick={() => toggleStatus(session.id, session.status)}
-                      className={`p-2.5 rounded-xl border transition-all ${session.status === 'active'
-                        ? 'bg-white text-emerald-600 border-emerald-100 hover:bg-emerald-50'
-                        : 'bg-white text-slate-400 border-slate-200 hover:bg-slate-50'
-                        }`}
-                      title={session.status === 'active' ? 'Tutup Sesi' : 'Aktifkan Sesi'}
-                    >
-                      {session.status === 'active' ? <CircleSlash size={18} /> : <Play size={18} />}
-                    </button>
+                    {/* 🔒 Status Toggle – admin only */}
+                    {canWrite && (
+                      <button
+                        onClick={() => toggleStatus(session.id, session.status)}
+                        className={`p-2.5 rounded-xl border transition-all ${session.status === 'active'
+                          ? 'bg-white text-emerald-600 border-emerald-100 hover:bg-emerald-50'
+                          : 'bg-white text-slate-400 border-slate-200 hover:bg-slate-50'
+                          }`}
+                        title={session.status === 'active' ? 'Tutup Sesi' : 'Aktifkan Sesi'}
+                      >
+                        {session.status === 'active' ? <CircleSlash size={18} /> : <Play size={18} />}
+                      </button>
+                    )}
 
-                    {/* View Analytics */}
+                    {/* View Analytics – available to all dashboard roles */}
                     <button
                       onClick={() => navigate('/admin/analytics', { state: { sessionId: session.id } })}
                       className="p-2.5 bg-white text-blue-600 border border-blue-100 rounded-xl hover:bg-blue-50 transition-all"
@@ -183,15 +200,17 @@ export default function SessionsPage() {
                       <ExternalLink size={18} />
                     </button>
 
-                    {/* 🚨 DELETE BUTTON */}
-                    <button
-                      onClick={() => handleDelete(session.id)}
-                      disabled={deletingId === session.id}
-                      className="p-2.5 bg-white text-slate-300 border border-slate-100 rounded-xl hover:text-red-600 hover:border-red-100 hover:bg-red-50 transition-all"
-                      title="Hapus Sesi"
-                    >
-                      {deletingId === session.id ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}
-                    </button>
+                    {/* 🔒 Delete – admin only */}
+                    {canWrite && (
+                      <button
+                        onClick={() => handleDelete(session.id)}
+                        disabled={deletingId === session.id}
+                        className="p-2.5 bg-white text-slate-300 border border-slate-100 rounded-xl hover:text-red-600 hover:border-red-100 hover:bg-red-50 transition-all"
+                        title="Hapus Sesi"
+                      >
+                        {deletingId === session.id ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

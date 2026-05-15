@@ -30,21 +30,32 @@ export function AuthProvider({ children }) {
       try {
         if (currentUser) {
           const email = currentUser.email.toLowerCase();
-          const adminSnap = await getDoc(doc(db, 'admins', email));
 
+          // 1️⃣ Check the admins collection first
+          const adminSnap = await getDoc(doc(db, 'admins', email));
           if (adminSnap.exists()) {
-            // ✅ User is an admin – set their role from the database
             const adminData = adminSnap.data();
             setIsAdmin(true);
             setUser(currentUser);
-            setRole(adminData.role || 'admin');
-          } else {
-            // ✅ User is NOT an admin – accept them as a student
-            //    Do NOT sign them out; JoinPage will validate the email format.
-            setIsAdmin(false);
-            setUser(currentUser);
-            setRole('student');
+            setRole(adminData.roleType || adminData.role || 'admin');
+            return; // short-circuit – no need to check further
           }
+
+          // 2️⃣ Not an admin – check the management collection
+          const mgmtSnap = await getDoc(doc(db, 'management', email));
+          if (mgmtSnap.exists()) {
+            // Management users can access the dashboard (read-only), so isAdmin = true
+            // but role = 'management' so the UI can hide destructive actions.
+            setIsAdmin(true);
+            setUser(currentUser);
+            setRole('management');
+            return; // short-circuit
+          }
+
+          // 3️⃣ Not in either privileged collection – treat as a regular student
+          setIsAdmin(false);
+          setUser(currentUser);
+          setRole('student');
         } else {
           setUser(null);
           setIsAdmin(false);
@@ -52,7 +63,7 @@ export function AuthProvider({ children }) {
         }
       } catch (e) {
         console.error('Auth check failed:', e);
-        // On error, still keep the user object to avoid infinite loading states
+        // On error keep the user object to avoid an infinite loading state
         setUser(currentUser);
         setIsAdmin(false);
         setRole('student');

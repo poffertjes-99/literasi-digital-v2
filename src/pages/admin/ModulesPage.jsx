@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react';
 import { collection, getDocs, addDoc, deleteDoc, updateDoc, doc, serverTimestamp, query, orderBy } from 'firebase/firestore';
 import { db } from '../../../firebase';
-import { BookOpen, Plus, Trash2, ChevronRight, Loader2, Pencil } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { BookOpen, Plus, Trash2, ChevronRight, Loader2, Pencil, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function ModulesPage() {
   const navigate = useNavigate();
+  const { role } = useAuth();
+  // Only full admins may create / edit / delete
+  const canWrite = role === 'admin';
+
   const [modules, setModules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -77,23 +82,32 @@ export default function ModulesPage() {
           <h1 className="text-2xl font-bold text-slate-800">Modul Soal</h1>
           <p className="text-slate-500 text-sm mt-1">Kelola modul dan soal skenario berbasis framework global</p>
         </div>
-        <button
-          onClick={() => {
-            if (showForm && editingId) {
-              setEditingId(null);
-              setForm({ title: '', description: '' });
-            } else {
-              setShowForm(!showForm);
-            }
-          }}
-          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm"
-        >
-          {showForm && editingId ? 'Batal Edit' : <><Plus size={16} /> Buat Modul</>}
-        </button>
+        {/* 🔒 Only admins see the create / cancel-edit button */}
+        {canWrite && (
+          <button
+            onClick={() => {
+              if (showForm && editingId) {
+                setEditingId(null);
+                setForm({ title: '', description: '' });
+              } else {
+                setShowForm(!showForm);
+              }
+            }}
+            className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm"
+          >
+            {showForm && editingId ? 'Batal Edit' : <><Plus size={16} /> Buat Modul</>}
+          </button>
+        )}
+        {/* 👁 Read-only badge for management users */}
+        {!canWrite && (
+          <span className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 text-slate-500 rounded-xl text-xs font-semibold">
+            <Eye size={13} /> Tampilan Saja
+          </span>
+        )}
       </div>
 
-      {/* Form (Create & Edit) */}
-      {showForm && (
+      {/* Form (Create & Edit) – admin only */}
+      {canWrite && showForm && (
         <div className={`border rounded-2xl p-6 transition-all ${editingId ? 'bg-amber-50 border-amber-100' : 'bg-blue-50 border-blue-100'}`}>
           <h2 className={`text-sm font-semibold mb-4 ${editingId ? 'text-amber-800' : 'text-blue-800'}`}>
             {editingId ? 'Edit Modul' : 'Modul Baru'}
@@ -159,23 +173,28 @@ export default function ModulesPage() {
                 {module.description && <p className="text-sm text-slate-400 mt-0.5 truncate">{module.description}</p>}
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
-                {/* 🚨 EDIT BUTTON */}
-                <button
-                  onClick={() => handleEdit(module)}
-                  className="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
-                >
-                  <Pencil size={16} />
-                </button>
+                {/* 🔒 Edit – admin only */}
+                {canWrite && (
+                  <button
+                    onClick={() => handleEdit(module)}
+                    className="p-2 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
+                  >
+                    <Pencil size={16} />
+                  </button>
+                )}
                 <button onClick={() => navigate(`/admin/modules/${module.id}`)} className="flex items-center gap-1 px-3 py-1.5 text-xs text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 font-medium transition-colors">
-                  Kelola Soal <ChevronRight size={12} />
+                  {canWrite ? 'Kelola Soal' : 'Lihat Soal'} <ChevronRight size={12} />
                 </button>
-                <button
-                  onClick={() => handleDelete(module.id)}
-                  disabled={deletingId === module.id}
-                  className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                >
-                  {deletingId === module.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
-                </button>
+                {/* 🔒 Delete – admin only */}
+                {canWrite && (
+                  <button
+                    onClick={() => handleDelete(module.id)}
+                    disabled={deletingId === module.id}
+                    className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                  >
+                    {deletingId === module.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                  </button>
+                )}
               </div>
             </div>
           ))}
