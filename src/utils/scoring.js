@@ -95,9 +95,9 @@ export function calculateFrameworkCoverage(questions) {
 //
 // Returns:
 //   {
-//     komdigiScores : { DSK: 0–100, DET: 0–100, DSA: 0–100, DCU: 0–100 },  ← used by admin analytics
-//     areaScores   : { '0': 0–100, …, '6': 0–100 },                         ← used by UNESCO breakdown
-//     overallIndex : 0–100,
+//     komdigiScores : { DSK: 1.00–5.00, DET: 1.00–5.00, DSA: 1.00–5.00, DCU: 1.00–5.00 },  ← used by admin analytics
+//     areaScores   : { '0': 1.00–5.00, …, '6': 1.00–5.00 },                                  ← used by UNESCO breakdown
+//     overallIndex : 1.00–5.00,
 //   }
 //
 // maxWeight: the highest weight value in the option scale (default 5).
@@ -137,7 +137,7 @@ export function calculateScores(answers, maxWeight = 5) {
     }
   });
 
-  // --- Normalise KOMDIGI scores (0–100) ---
+  // --- Normalise KOMDIGI scores (scale 1.00–5.00, pure average) ---
   const komdigiScores = {};
   let komdigiActiveCount = 0;
   let komdigiActiveSum = 0;
@@ -145,7 +145,7 @@ export function calculateScores(answers, maxWeight = 5) {
   Object.keys(komdigiTotals).forEach((code) => {
     const count = komdigiCounts[code];
     if (count > 0) {
-      const score = Math.round((komdigiTotals[code] / (count * maxWeight)) * 100);
+      const score = Math.round((komdigiTotals[code] / count) * 100) / 100;
       komdigiScores[code] = score;
       komdigiActiveCount += 1;
       komdigiActiveSum += score;
@@ -154,33 +154,33 @@ export function calculateScores(answers, maxWeight = 5) {
     }
   });
 
-  // --- Normalise UNESCO Area scores (0–100) ---
+  // --- Normalise UNESCO Area scores (scale 1.00–5.00, pure average) ---
   const areaScores = {};
   Object.keys(areaTotals).forEach((code) => {
     const count = areaCounts[code];
     areaScores[code] = count > 0
-      ? Math.round((areaTotals[code] / (count * maxWeight)) * 100)
+      ? Math.round((areaTotals[code] / count) * 100) / 100
       : 0;
   });
 
   // --- Overall index: average of ACTIVE KOMDIGI pillars only ---
   // (avoid inflating/deflating by pillars with zero questions in this quiz set)
   const overallIndex = komdigiActiveCount > 0
-    ? Math.round(komdigiActiveSum / komdigiActiveCount)
+    ? Math.round((komdigiActiveSum / komdigiActiveCount) * 100) / 100
     : 0;
 
   return { komdigiScores, areaScores, overallIndex };
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
-// getLiteracyLevel — Maps a 0–100 score to a qualitative label
+// getLiteracyLevel — Maps a 1.00–5.00 index score to a qualitative label
 // ──────────────────────────────────────────────────────────────────────────────
 export function getLiteracyLevel(score) {
   const s = Number(score);
   if (!Number.isFinite(s)) return { label: 'N/A', color: 'text-slate-400' };
-  if (s >= 80) return { label: 'Sangat Baik', color: 'text-emerald-600' };
-  if (s >= 65) return { label: 'Baik', color: 'text-blue-600' };
-  if (s >= 50) return { label: 'Cukup', color: 'text-amber-600' };
+  if (s >= 4.0)  return { label: 'Sangat Baik', color: 'text-emerald-600' };
+  if (s >= 3.25) return { label: 'Baik', color: 'text-blue-600' };
+  if (s >= 2.50) return { label: 'Cukup', color: 'text-amber-600' };
   return { label: 'Perlu Peningkatan', color: 'text-red-600' };
 }
 

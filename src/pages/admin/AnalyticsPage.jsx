@@ -27,8 +27,9 @@ function aggregate(submissions) {
   const counts = Object.fromEntries(KOMDIGI_KEYS.map((k) => [k, 0]));
 
   submissions.forEach(({ scores = {} }) => {
+    const komdigiData = scores.komdigiScores || scores;
     KOMDIGI_KEYS.forEach((code) => {
-      const val = scores[code];
+      const val = komdigiData[code];
       if (typeof val === 'number') {
         totals[code] += val;
         counts[code] += 1;
@@ -39,7 +40,7 @@ function aggregate(submissions) {
   const avg = Object.fromEntries(
     KOMDIGI_KEYS.map((code) => [
       code,
-      counts[code] > 0 ? Math.round(totals[code] / counts[code]) : 0,
+      counts[code] > 0 ? Number((totals[code] / counts[code]).toFixed(2)) : 0,
     ]),
   );
 
@@ -50,7 +51,7 @@ function aggregate(submissions) {
 
   const index =
     activePillarValues.length > 0
-      ? Math.round(activePillarValues.reduce((a, b) => a + b, 0) / activePillarValues.length)
+      ? Number((activePillarValues.reduce((a, b) => a + b, 0) / activePillarValues.length).toFixed(2))
       : 0;
 
   return { scores: avg, index };
@@ -281,7 +282,7 @@ export default function AnalyticsPage() {
             {loadingSubmissions ? (
               <Loader2 size={48} className="animate-spin text-blue-200" />
             ) : (
-              <>{index}<span className="text-3xl font-semibold text-blue-200">%</span></>
+              <>{index}<span className="text-3xl font-semibold text-blue-200"> / 5.00</span></>
             )}
           </div>
           <p className="text-blue-100 mt-2 font-medium">{level.label}</p>
@@ -317,15 +318,15 @@ export default function AnalyticsPage() {
           {/* Charts */}
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
             <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
-              <h2 className="text-sm font-semibold text-slate-700 mb-4">Skor per Pilar (%)</h2>
+              <h2 className="text-sm font-semibold text-slate-700 mb-4">Skor per Pilar (Skala 1–5)</h2>
               <ResponsiveContainer width="100%" height={240}>
                 <BarChart data={barData} margin={{ left: -10 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                   <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#64748b' }} />
-                  <YAxis domain={[0, 100]} tick={{ fontSize: 10, fill: '#64748b' }} />
+                  <YAxis domain={[0, 5]} tick={{ fontSize: 10, fill: '#64748b' }} />
                   <Tooltip
                     cursor={{ fill: '#f8fafc' }}
-                    formatter={(v) => [`${v}%`]}
+                    formatter={(v) => [v]}
                     contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '12px' }}
                   />
                   <Bar dataKey="value" radius={[6, 6, 0, 0]} maxBarSize={60}>
@@ -343,7 +344,7 @@ export default function AnalyticsPage() {
                 <RadarChart data={radarData}>
                   <PolarGrid stroke="#e2e8f0" />
                   <PolarAngleAxis dataKey="pillar" tick={{ fontSize: 11, fill: '#64748b', fontWeight: 600 }} />
-                  <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 9, fill: '#94a3b8' }} />
+                  <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fontSize: 9, fill: '#94a3b8' }} />
                   <Radar name="Skor" dataKey="value" stroke="#6366f1" strokeWidth={2} fill="#6366f1" fillOpacity={0.25} />
                 </RadarChart>
               </ResponsiveContainer>
@@ -376,7 +377,7 @@ export default function AnalyticsPage() {
                       </span>
                     </td>
                     <td className="px-6 py-3.5 text-slate-700 font-medium">{label}</td>
-                    <td className="px-6 py-3.5 text-right font-bold text-slate-800">{score}%</td>
+                    <td className="px-6 py-3.5 text-right font-bold text-slate-800">{score}</td>
                     <td className="px-6 py-3.5 text-right">
                       <span
                         className={`text-xs font-bold px-2.5 py-1 rounded-full border ${lv.color.replace('text', 'bg').replace('600', '50')} ${lv.color} ${lv.color.replace('text', 'border').replace('600', '200')}`}

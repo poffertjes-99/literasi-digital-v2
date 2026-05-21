@@ -102,12 +102,19 @@ export default function ModuleDetailPage() {
         const rows = text.split('\n').filter(row => row.trim() !== '');
         if (rows[0].toLowerCase().includes('text')) rows.shift();
         const batch = rows.map(row => {
+          // Gunakan parser CSV sederhana
           const cols = row.split(',').map(c => c.trim().replace(/^"|"$/g, ''));
-          if (cols.length < 11) return null;
+          if (cols.length < 14) return null; // Harus 14 kolom
+
           return {
             text: cols[0],
-            pillarCode: 'DSK', areaCode: '1', competencyCode: '1.1',
-            options: Array.from({ length: 5 }, (_, i) => ({ text: cols[1 + i * 2], weight: parseInt(cols[2 + i * 2]) || (i + 1) })),
+            pillarCode: cols[1],
+            areaCode: cols[2],
+            competencyCode: cols[3],
+            options: Array.from({ length: 5 }, (_, i) => ({
+              text: cols[4 + i * 2],
+              weight: parseInt(cols[5 + i * 2]) || (i + 1)
+            })),
             createdAt: serverTimestamp(),
           };
         }).filter(Boolean);
