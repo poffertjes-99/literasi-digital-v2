@@ -5,10 +5,10 @@
 
 // 🇮🇩 KOMDIGI PILLARS — used for admin analytics & scoring output
 export const KOMDIGI_FRAMEWORK = {
-  DSK: { label: 'Kecakapan Digital' },
-  DET: { label: 'Etika Digital' },
-  DSA: { label: 'Keamanan Digital' },
-  DCU: { label: 'Budaya Digital' },
+  DSK: { label: 'Digital Skills' },
+  DET: { label: 'Digital Ethics' },
+  DSA: { label: 'Digital Safety' },
+  DCU: { label: 'Digital Culture' },
 };
 
 // 🌍 UNESCO DigComp Areas — used for question mapping & framework coverage
@@ -178,7 +178,7 @@ export function calculateScores(answers, maxWeight = 5) {
 export function getLiteracyLevel(score) {
   const s = Number(score);
   if (!Number.isFinite(s)) return { label: 'N/A', color: 'text-slate-400' };
-  if (s >= 4.0)  return { label: 'Sangat Baik', color: 'text-emerald-600' };
+  if (s >= 4.0) return { label: 'Sangat Baik', color: 'text-emerald-600' };
   if (s >= 3.25) return { label: 'Baik', color: 'text-blue-600' };
   if (s >= 2.50) return { label: 'Cukup', color: 'text-amber-600' };
   return { label: 'Perlu Peningkatan', color: 'text-red-600' };
