@@ -12,9 +12,10 @@ const emptyQuestion = () => ({
   areaCode: '1',
   competencyCode: '1.1',
   options: [
-    { text: '', weight: 0 },
     { text: '', weight: 1 },
+    { text: '', weight: 2 },
     { text: '', weight: 3 },
+    { text: '', weight: 4 },
     { text: '', weight: 5 },
   ],
 });
@@ -122,10 +123,10 @@ export default function ModuleDetailPage() {
 
         const batch = rows.map(row => {
           const cols = csvSplit(row);
-          // New 13-column format:
+          // 15-column format:
           // [0] scenarioText  [1] questionText  [2] pillarCode  [3] areaCode  [4] competencyCode
-          // [5] OptA  [6] W_A  [7] OptB  [8] W_B  [9] OptC  [10] W_C  [11] OptD  [12] W_D
-          if (cols.length < 13) return null;
+          // [5] OptA  [6] W_A  [7] OptB  [8] W_B  [9] OptC  [10] W_C  [11] OptD  [12] W_D  [13] OptE  [14] W_E
+          if (cols.length < 15) return null;
 
           return {
             scenarioText: cols[0],
@@ -133,9 +134,9 @@ export default function ModuleDetailPage() {
             pillarCode: cols[2],
             areaCode: String(cols[3]),
             competencyCode: cols[4],
-            options: Array.from({ length: 4 }, (_, i) => ({
+            options: Array.from({ length: 5 }, (_, i) => ({
               text: cols[5 + i * 2],
-              weight: parseInt(cols[6 + i * 2], 10) || 0,
+              weight: parseInt(cols[6 + i * 2], 10) || (i + 1),
             })),
             createdAt: serverTimestamp(),
           };
