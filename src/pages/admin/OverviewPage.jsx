@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { collection, getDocs, query, orderBy, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../firebase';
-import { KOMDIGI_FRAMEWORK, getLiteracyLevel } from '../../utils/scoring';
+import { KOMDIGI_FRAMEWORK, getLiteracyLevel, calculatePercentage } from '../../utils/scoring';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
@@ -84,11 +84,13 @@ export default function OverviewPage() {
 
         if (cancelled) return;
 
-        // 3. Compute per-pillar averages
+        // 3. Compute per-pillar averages (preserve 2-decimal precision on 1–5 scale)
         const avgPillar = Object.fromEntries(
           KOMDIGI_KEYS.map((code) => [
             code,
-            pillarCounts[code] > 0 ? Math.round(pillarTotals[code] / pillarCounts[code]) : 0,
+            pillarCounts[code] > 0
+              ? Number((pillarTotals[code] / pillarCounts[code]).toFixed(2))
+              : 0,
           ]),
         );
 
@@ -99,7 +101,7 @@ export default function OverviewPage() {
 
         const overallIndex =
           activePillarValues.length > 0
-            ? Math.round(activePillarValues.reduce((a, b) => a + b, 0) / activePillarValues.length)
+            ? Number((activePillarValues.reduce((a, b) => a + b, 0) / activePillarValues.length).toFixed(2))
             : 0;
 
         setStats({
@@ -166,7 +168,7 @@ export default function OverviewPage() {
         <StatCard label="Submission" value={stats.submissions} sub="peserta telah mengisi" icon={Users} color="bg-emerald-500" />
         <StatCard
           label="Indeks Literasi"
-          value={`${stats.index}%`}
+          value={calculatePercentage(stats.index)}
           sub={<span className={level.color}>{level.label}</span>}
           icon={TrendingUp}
           color="bg-amber-500"
@@ -183,9 +185,9 @@ export default function OverviewPage() {
               <BarChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                 <XAxis dataKey="pillar" tick={{ fontSize: 11, fill: '#64748b' }} />
-                <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: '#64748b' }} />
+                <YAxis domain={[0, 5]} tick={{ fontSize: 11, fill: '#64748b' }} />
                 <Tooltip
-                  formatter={(v) => [`${v}%`, 'Rata-rata']}
+                  formatter={(v) => [calculatePercentage(v), 'Rata-rata']}
                   contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0' }}
                 />
                 <Bar dataKey="value" fill="#3b82f6" radius={[6, 6, 0, 0]} maxBarSize={60} />
@@ -200,7 +202,7 @@ export default function OverviewPage() {
               <RadarChart data={chartData}>
                 <PolarGrid stroke="#e2e8f0" />
                 <PolarAngleAxis dataKey="pillar" tick={{ fontSize: 10, fill: '#64748b' }} />
-                <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 9, fill: '#94a3b8' }} />
+                <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fontSize: 9, fill: '#94a3b8' }} />
                 <Radar name="Literasi" dataKey="value" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.25} />
               </RadarChart>
             </ResponsiveContainer>

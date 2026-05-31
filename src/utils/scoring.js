@@ -173,6 +173,19 @@ export function calculateScores(answers, maxWeight = 5) {
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
+// calculatePercentage — Converts a 1.00–5.00 raw score to a % string
+//
+// Formula: (score / 5) * 100, rounded to 1 decimal place.
+// Returns a string with a trailing "%" symbol (e.g. 4.12 → "82.4%").
+// Returns "0.0%" for falsy / non-finite inputs.
+// ──────────────────────────────────────────────────────────────────────────────
+export function calculatePercentage(score) {
+  const s = Number(score);
+  if (!Number.isFinite(s)) return '0.0%';
+  return `${Math.round((s / 5) * 1000) / 10}%`;
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
 // getLiteracyLevel — Maps a 1.00–5.00 index score to a qualitative label
 // ──────────────────────────────────────────────────────────────────────────────
 export function getLiteracyLevel(score) {

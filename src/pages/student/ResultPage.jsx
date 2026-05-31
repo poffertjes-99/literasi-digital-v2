@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { getLiteracyLevel, KOMDIGI_FRAMEWORK } from '../../utils/scoring';
+import { getLiteracyLevel, KOMDIGI_FRAMEWORK, calculatePercentage } from '../../utils/scoring';
 import { CheckCircle2, ArrowRight } from 'lucide-react';
 
 export default function ResultPage() {
@@ -41,7 +41,7 @@ export default function ResultPage() {
 
           <div className="mt-8 py-8 border-y border-slate-50">
             <p className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-3">Index Literasi Digital Anda</p>
-            <div className="text-7xl font-black text-blue-600 mb-2">{overallIndex}%</div>
+            <div className="text-7xl font-black text-blue-600 mb-2">{calculatePercentage(overallIndex)}</div>
             <div className={`text-lg font-bold ${level.color}`}>{level.label}</div>
           </div>
         </div>
@@ -55,7 +55,7 @@ export default function ResultPage() {
                   <div className="text-[10px] font-black text-slate-400 uppercase">🇮🇩 Pilar Nasional</div>
                   <div className="text-sm font-bold text-slate-700">{pillar?.label ?? code}</div>
                 </div>
-                <div className="text-2xl font-black text-slate-800">{score}%</div>
+                <div className="text-2xl font-black text-slate-800">{calculatePercentage(score)}</div>
               </div>
             );
           })}
