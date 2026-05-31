@@ -6,15 +6,15 @@ import { PILLARS, KOMDIGI_FRAMEWORK, calculateFrameworkCoverage } from '../../ut
 import { ArrowLeft, Plus, Trash2, Loader2, HelpCircle, ChevronDown, ChevronUp, Pencil, Target, ShieldCheck, FileUp, Tag, Info, Layout } from 'lucide-react';
 
 const emptyQuestion = () => ({
-  text: '',
+  scenarioText: '',
+  questionText: '',
   pillarCode: 'DSK',
   areaCode: '1',
   competencyCode: '1.1',
   options: [
+    { text: '', weight: 0 },
     { text: '', weight: 1 },
-    { text: '', weight: 2 },
     { text: '', weight: 3 },
-    { text: '', weight: 4 },
     { text: '', weight: 5 },
   ],
 });
@@ -58,9 +58,17 @@ export default function ModuleDetailPage() {
   const coverage = calculateFrameworkCoverage(questions);
   const currentCompetency = PILLARS[form.areaCode]?.indicators.find(i => i.code === form.competencyCode);
 
+  const handleOptionChange = (index, field, value) => {
+    const updated = form.options.map((opt, i) =>
+      i === index ? { ...opt, [field]: field === 'weight' ? Number(value) : value } : opt
+    );
+    setForm({ ...form, options: updated });
+  };
+
   const handleEdit = (q) => {
     setForm({
-      text: q.text,
+      scenarioText: q.scenarioText || q.text || '',
+      questionText: q.questionText || '',
       pillarCode: q.pillarCode || 'DSK',
       areaCode: q.areaCode || '1',
       competencyCode: q.competencyCode || '1.1',
@@ -73,7 +81,7 @@ export default function ModuleDetailPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.text.trim() || form.options.some((o) => !o.text.trim())) return;
+    if (!form.scenarioText.trim() || form.options.some((o) => !o.text.trim())) return;
     setSaving(true);
     try {
       const payload = { ...form, updatedAt: serverTimestamp() };
@@ -100,24 +108,39 @@ export default function ModuleDetailPage() {
       try {
         const text = event.target.result;
         const rows = text.split('\n').filter(row => row.trim() !== '');
-        if (rows[0].toLowerCase().includes('text')) rows.shift();
+
+        // Skip header row: detect by checking if first column contains 'scenario'
+        if (rows[0].toLowerCase().includes('scenario')) rows.shift();
+
+        // RFC-4180 safe splitter: ignores commas inside double-quoted fields.
+        // The lookahead checks that the number of quote chars after the comma is even,
+        // meaning we are NOT currently inside a quoted block.
+        const csvSplit = (row) =>
+          row
+            .split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
+            .map(c => c.trim().replace(/^"|"$/g, ''));
+
         const batch = rows.map(row => {
-          // Gunakan parser CSV sederhana
-          const cols = row.split(',').map(c => c.trim().replace(/^"|"$/g, ''));
-          if (cols.length < 14) return null; // Harus 14 kolom
+          const cols = csvSplit(row);
+          // New 13-column format:
+          // [0] scenarioText  [1] questionText  [2] pillarCode  [3] areaCode  [4] competencyCode
+          // [5] OptA  [6] W_A  [7] OptB  [8] W_B  [9] OptC  [10] W_C  [11] OptD  [12] W_D
+          if (cols.length < 13) return null;
 
           return {
-            text: cols[0],
-            pillarCode: cols[1],
-            areaCode: cols[2],
-            competencyCode: cols[3],
-            options: Array.from({ length: 5 }, (_, i) => ({
-              text: cols[4 + i * 2],
-              weight: parseInt(cols[5 + i * 2]) || (i + 1)
+            scenarioText: cols[0],
+            questionText: cols[1],
+            pillarCode: cols[2],
+            areaCode: String(cols[3]),
+            competencyCode: cols[4],
+            options: Array.from({ length: 4 }, (_, i) => ({
+              text: cols[5 + i * 2],
+              weight: parseInt(cols[6 + i * 2], 10) || 0,
             })),
             createdAt: serverTimestamp(),
           };
         }).filter(Boolean);
+
         if (batch.length > 0) {
           await Promise.all(batch.map(q => addDoc(collection(db, 'modules', moduleId, 'questions'), q)));
           fetchData();
@@ -187,14 +210,24 @@ export default function ModuleDetailPage() {
                 </h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Skenario Masalah (Problem Statement)</label>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">📋 Skenario Masalah (Stimulus)</label>
                     <textarea
                       rows={4}
-                      value={form.text}
-                      onChange={(e) => setForm({ ...form, text: e.target.value })}
+                      value={form.scenarioText}
+                      onChange={(e) => setForm({ ...form, scenarioText: e.target.value })}
                       className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all"
-                      placeholder="Masukkan situasi atau pertanyaan..."
+                      placeholder="Deskripsikan konteks atau situasi skenario..."
                       required
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">❓ Pertanyaan Konflik (Conflict Question)</label>
+                    <textarea
+                      rows={2}
+                      value={form.questionText}
+                      onChange={(e) => setForm({ ...form, questionText: e.target.value })}
+                      className="w-full px-5 py-4 bg-slate-50 border border-indigo-200 rounded-2xl text-sm outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 transition-all"
+                      placeholder="Apa yang akan Anda lakukan? / Langkah apa yang Anda ambil?"
                     />
                   </div>
                   <div>
@@ -221,7 +254,7 @@ export default function ModuleDetailPage() {
                       <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
                         <span className="text-[10px] font-black text-slate-400">BOBOT</span>
                         <select value={opt.weight} onChange={(e) => handleOptionChange(i, 'weight', e.target.value)} className="bg-transparent text-xs font-black text-blue-600 outline-none">
-                          {[1, 2, 3, 4, 5].map(w => <option key={w} value={w}>{w}</option>)}
+                          {[0, 1, 2, 3, 4, 5].map(w => <option key={w} value={w}>{w}</option>)}
                         </select>
                       </div>
                     </div>
@@ -293,8 +326,16 @@ export default function ModuleDetailPage() {
                 <div className="flex items-start gap-4 p-6 cursor-pointer" onClick={() => setExpandedId(isExpanded ? null : q.id)}>
                   <div className="w-10 h-10 rounded-2xl bg-slate-50 flex items-center justify-center text-xs font-black text-slate-400 mt-1 flex-shrink-0">{idx + 1}</div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-slate-700 leading-relaxed mb-3">{q.text}</p>
-                    <div className="flex flex-wrap gap-2">
+                    {/* Stimulus / Scenario */}
+                    <p className="text-[10px] font-black text-indigo-500 uppercase tracking-widest mb-1">Skenario</p>
+                    <p className="text-sm font-semibold text-slate-700 leading-relaxed mb-1">
+                      {q.scenarioText || q.text}
+                    </p>
+                    {/* Conflict Question */}
+                    {(q.questionText) && (
+                      <p className="text-xs text-slate-500 italic mb-3">{q.questionText}</p>
+                    )}
+                    <div className="flex flex-wrap gap-2 mt-2">
                       <span className="text-[9px] font-black px-3 py-1.5 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 uppercase tracking-widest">🇮🇩 {q.pillarCode}</span>
                       <span className="text-[9px] font-black px-3 py-1.5 rounded-xl bg-violet-50 text-violet-700 border border-violet-100 uppercase tracking-widest">🌍 {q.competencyCode}</span>
                       {isExpanded && <span className="text-[9px] font-bold text-slate-400 px-3 py-1.5">{indicator?.label}</span>}
