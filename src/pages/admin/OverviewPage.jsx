@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { collection, getDocs, query, orderBy, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../firebase';
-import { KOMDIGI_FRAMEWORK, getLiteracyLevel, calculatePercentage } from '../../utils/scoring';
+import { KOMDIGI_FRAMEWORK, getLiteracyLevel, formatIndexScore } from '../../utils/scoring';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
@@ -168,7 +168,7 @@ export default function OverviewPage() {
         <StatCard label="Submission" value={stats.submissions} sub="peserta telah mengisi" icon={Users} color="bg-emerald-500" />
         <StatCard
           label="Indeks Literasi"
-          value={calculatePercentage(stats.index)}
+          value={`${formatIndexScore(stats.index)} / 5.00`}
           sub={<span className={level.color}>{level.label}</span>}
           icon={TrendingUp}
           color="bg-amber-500"
@@ -187,7 +187,7 @@ export default function OverviewPage() {
                 <XAxis dataKey="pillar" tick={{ fontSize: 11, fill: '#64748b' }} />
                 <YAxis domain={[0, 5]} tick={{ fontSize: 11, fill: '#64748b' }} />
                 <Tooltip
-                  formatter={(v) => [calculatePercentage(v), 'Rata-rata']}
+                  formatter={(v) => [formatIndexScore(v), 'Rata-rata']}
                   contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0' }}
                 />
                 <Bar dataKey="value" fill="#3b82f6" radius={[6, 6, 0, 0]} maxBarSize={60} />

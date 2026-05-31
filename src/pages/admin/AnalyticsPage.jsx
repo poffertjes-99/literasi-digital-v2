@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../../../firebase';
-import { KOMDIGI_FRAMEWORK, getLiteracyLevel, calculatePercentage } from '../../utils/scoring';
+import { KOMDIGI_FRAMEWORK, getLiteracyLevel, formatIndexScore } from '../../utils/scoring';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Cell,
@@ -282,7 +282,7 @@ export default function AnalyticsPage() {
             {loadingSubmissions ? (
               <Loader2 size={48} className="animate-spin text-blue-200" />
             ) : (
-              <>{calculatePercentage(index)}</>
+              <>{formatIndexScore(index)}<span className="text-3xl font-semibold text-blue-200"> / 5.00</span></>
             )}
           </div>
           <p className="text-blue-100 mt-2 font-medium">{level.label}</p>
@@ -318,7 +318,7 @@ export default function AnalyticsPage() {
           {/* Charts */}
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
             <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
-              <h2 className="text-sm font-semibold text-slate-700 mb-4">Skor per Pilar (%)</h2>
+              <h2 className="text-sm font-semibold text-slate-700 mb-4">Skor per Pilar (Skala 1–5)</h2>
               <ResponsiveContainer width="100%" height={240}>
                 <BarChart data={barData} margin={{ left: -10 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
@@ -326,7 +326,7 @@ export default function AnalyticsPage() {
                   <YAxis domain={[0, 5]} tick={{ fontSize: 10, fill: '#64748b' }} />
                   <Tooltip
                     cursor={{ fill: '#f8fafc' }}
-                    formatter={(v) => [calculatePercentage(v)]}
+                    formatter={(v) => [formatIndexScore(v)]}
                     contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '12px' }}
                   />
                   <Bar dataKey="value" radius={[6, 6, 0, 0]} maxBarSize={60}>
@@ -361,7 +361,7 @@ export default function AnalyticsPage() {
                 <tr className="text-xs text-slate-500 bg-slate-50 border-b border-slate-100">
                   <th className="text-left px-6 py-3 font-semibold">Kode</th>
                   <th className="text-left px-6 py-3 font-semibold">Pilar</th>
-                  <th className="text-right px-6 py-3 font-semibold">Skor Rata-rata (%)</th>
+                  <th className="text-right px-6 py-3 font-semibold">Skor Rata-rata (1–5)</th>
                   <th className="text-right px-6 py-3 font-semibold">Level</th>
                 </tr>
               </thead>
@@ -377,7 +377,7 @@ export default function AnalyticsPage() {
                       </span>
                     </td>
                     <td className="px-6 py-3.5 text-slate-700 font-medium">{label}</td>
-                    <td className="px-6 py-3.5 text-right font-bold text-slate-800">{calculatePercentage(score)}</td>
+                    <td className="px-6 py-3.5 text-right font-bold text-slate-800">{formatIndexScore(score)}</td>
                     <td className="px-6 py-3.5 text-right">
                       <span
                         className={`text-xs font-bold px-2.5 py-1 rounded-full border ${lv.color.replace('text', 'bg').replace('600', '50')} ${lv.color} ${lv.color.replace('text', 'border').replace('600', '200')}`}

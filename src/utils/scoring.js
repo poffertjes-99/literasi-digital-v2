@@ -173,16 +173,16 @@ export function calculateScores(answers, maxWeight = 5) {
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
-// calculatePercentage — Converts a 1.00–5.00 raw score to a % string
+// formatIndexScore — Formats a 1.00–5.00 raw score to a clean 2-decimal string
 //
-// Formula: (score / 5) * 100, rounded to 1 decimal place.
-// Returns a string with a trailing "%" symbol (e.g. 4.12 → "82.4%").
-// Returns "0.0%" for falsy / non-finite inputs.
+// Returns the score as a fixed-precision string (e.g. 4.12), preventing
+// floating-point artifacts like 4.120000000000001 in the UI.
+// Returns "0.00" for falsy / non-finite inputs.
 // ──────────────────────────────────────────────────────────────────────────────
-export function calculatePercentage(score) {
+export function formatIndexScore(score) {
   const s = Number(score);
-  if (!Number.isFinite(s)) return '0.0%';
-  return `${Math.round((s / 5) * 1000) / 10}%`;
+  if (!Number.isFinite(s)) return '0.00';
+  return s.toFixed(2);
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
