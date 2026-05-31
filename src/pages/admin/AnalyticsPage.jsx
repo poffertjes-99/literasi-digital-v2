@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../../../firebase';
 import { KOMDIGI_FRAMEWORK, getLiteracyLevel, formatIndexScore } from '../../utils/scoring';
@@ -78,6 +78,8 @@ export default function AnalyticsPage() {
   const [loadingSessions, setLoadingSessions] = useState(true);
   const [loadingSubmissions, setLoadingSubmissions] = useState(false);
   const [fetchError, setFetchError] = useState(null);
+  const [filterJurusan, setFilterJurusan] = useState('All');
+  const [filterAngkatan, setFilterAngkatan] = useState('All');
 
   // ✅ FIX 1: Use a ref as the cache backing store so callbacks always read the
   //    latest data without listing it in their dependency arrays.
@@ -189,7 +191,32 @@ export default function AnalyticsPage() {
       ? Object.values(cache).flat()
       : (cache[selectedId] || []);
 
-  const { scores, index } = aggregate(selectedSubmissions);
+  // ── Dynamic filter options — auto-populated from live data ───────────────
+  // Using Set() means new majors/batches appear in the UI automatically.
+  const jurusanOptions = useMemo(() => {
+    const unique = [...new Set(
+      selectedSubmissions.map((s) => s.jurusan).filter(Boolean)
+    )].sort((a, b) => a.localeCompare(b));
+    return unique;
+  }, [selectedSubmissions]);
+
+  const angkatanOptions = useMemo(() => {
+    const unique = [...new Set(
+      selectedSubmissions.map((s) => String(s.angkatan)).filter(Boolean)
+    )].sort((a, b) => a.localeCompare(b));
+    return unique;
+  }, [selectedSubmissions]);
+
+  // ── Filtered submissions — applies jurusan + angkatan segmentation ────────
+  const filteredSubmissions = useMemo(() => {
+    return selectedSubmissions.filter((s) => {
+      const jurusanMatch = filterJurusan === 'All' || s.jurusan === filterJurusan;
+      const angkatanMatch = filterAngkatan === 'All' || String(s.angkatan) === filterAngkatan;
+      return jurusanMatch && angkatanMatch;
+    });
+  }, [selectedSubmissions, filterJurusan, filterAngkatan]);
+
+  const { scores, index } = aggregate(filteredSubmissions);
   const level = getLiteracyLevel(index);
 
   const barData = KOMDIGI_KEYS.map((code) => ({
@@ -209,6 +236,8 @@ export default function AnalyticsPage() {
     score: scores[code],
     level: getLiteracyLevel(scores[code]),
   }));
+
+  const isFiltered = filterJurusan !== 'All' || filterAngkatan !== 'All';
 
   // ── Render states ─────────────────────────────────────────────────────────
   if (loadingSessions) {
@@ -260,6 +289,60 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
+      {/* Segmentation Filters */}
+      <div className="flex flex-wrap items-center gap-3 bg-white border border-slate-100 rounded-2xl px-5 py-3.5 shadow-sm">
+        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex-shrink-0">Filter Segmen</span>
+        <div className="flex flex-wrap gap-3 flex-1">
+
+          {/* Jurusan filter */}
+          <div className="relative">
+            <select
+              id="filter-jurusan"
+              value={filterJurusan}
+              onChange={(e) => setFilterJurusan(e.target.value)}
+              className="appearance-none pl-3 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer"
+            >
+              <option value="All">Semua Jurusan</option>
+              {jurusanOptions.map((j) => (
+                <option key={j} value={j}>{j}</option>
+              ))}
+            </select>
+            <ChevronDown size={12} className="absolute right-2.5 top-2.5 text-slate-400 pointer-events-none" />
+          </div>
+
+          {/* Angkatan filter */}
+          <div className="relative">
+            <select
+              id="filter-angkatan"
+              value={filterAngkatan}
+              onChange={(e) => setFilterAngkatan(e.target.value)}
+              className="appearance-none pl-3 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer"
+            >
+              <option value="All">Semua Angkatan</option>
+              {angkatanOptions.map((a) => (
+                <option key={a} value={a}>{a}</option>
+              ))}
+            </select>
+            <ChevronDown size={12} className="absolute right-2.5 top-2.5 text-slate-400 pointer-events-none" />
+          </div>
+
+          {/* Reset button — only visible when a filter is active */}
+          {isFiltered && (
+            <button
+              onClick={() => { setFilterJurusan('All'); setFilterAngkatan('All'); }}
+              className="px-3 py-2 text-xs font-bold text-red-500 hover:text-red-700 hover:bg-red-50 rounded-xl border border-red-100 transition-all"
+            >
+              ✕ Reset Filter
+            </button>
+          )}
+        </div>
+
+        {/* Live filter summary */}
+        <span className="text-[10px] font-semibold text-slate-400 ml-auto flex-shrink-0">
+          {filteredSubmissions.length} / {selectedSubmissions.length} peserta
+        </span>
+      </div>
+
       {/* Non-blocking per-session error banner */}
       {fetchError && (
         <div className="flex items-center gap-3 bg-red-50 border border-red-100 rounded-xl px-4 py-3 text-sm text-red-700">
@@ -290,7 +373,10 @@ export default function AnalyticsPage() {
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
             <p className="text-blue-200 text-xs uppercase tracking-wider font-semibold">Total Peserta</p>
-            <p className="text-2xl font-bold mt-1">{selectedSubmissions.length}</p>
+            <p className="text-2xl font-bold mt-1">{filteredSubmissions.length}</p>
+            {isFiltered && (
+              <p className="text-blue-300 text-[10px] mt-0.5">dari {selectedSubmissions.length} total</p>
+            )}
           </div>
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10">
             <p className="text-blue-200 text-xs uppercase tracking-wider font-semibold">Sesi Dipilih</p>
@@ -303,7 +389,7 @@ export default function AnalyticsPage() {
 
       {loadingSubmissions ? (
         <div className="h-64 bg-slate-100 rounded-2xl animate-pulse" />
-      ) : selectedSubmissions.length === 0 ? (
+      ) : filteredSubmissions.length === 0 ? (
         <div className="bg-white rounded-2xl border border-dashed border-slate-200 p-12 text-center">
           <BarChart2 size={40} className="mx-auto text-slate-300 mb-3" />
           <p className="text-slate-500 font-medium">Belum ada submission untuk filter ini</p>
