@@ -1,51 +1,501 @@
 studentId,jurusan,angkatan,DSK,DET,DSA,DCU
 si-23001@students.ithb.ac.id,Sistem Informasi,2023,4.25,4.50,3.50,4.00
-if-24015@students.ithb.ac.id,Informatika,2024,3.50,3.75,4.25,4.50
-dkv-23042@students.ithb.ac.id,Desain Komunikasi Visual,2023,4.60,4.40,4.00,4.25
-mg-24055@students.ithb.ac.id,Manajemen,2024,3.25,3.00,3.75,3.50
-si-23011@students.ithb.ac.id,Sistem Informasi,2023,3.90,4.10,4.40,4.25
-if-23022@students.ithb.ac.id,Informatika,2023,4.40,4.25,4.50,4.60
-dkv-24005@students.ithb.ac.id,Desain Komunikasi Visual,2024,3.00,3.25,3.50,3.40
-mg-23019@students.ithb.ac.id,Manajemen,2023,4.75,4.50,4.25,4.40
-si-24050@students.ithb.ac.id,Sistem Informasi,2024,3.60,3.50,3.75,3.90
-if-23044@students.ithb.ac.id,Informatika,2023,4.00,4.25,4.10,4.40
-if-24001@students.ithb.ac.id,Informatika,2024,3.75,4.00,4.25,3.90
-if-24002@students.ithb.ac.id,Informatika,2024,4.40,4.50,4.25,4.60
-if-24003@students.ithb.ac.id,Informatika,2024,3.00,3.25,3.50,3.40
-if-24012@students.ithb.ac.id,Informatika,2024,4.75,4.75,4.50,4.60
-if-23008@students.ithb.ac.id,Informatika,2023,4.10,3.90,4.25,4.00
-if-23033@students.ithb.ac.id,Informatika,2023,3.50,3.60,3.75,3.50
-si-23002@students.ithb.ac.id,Sistem Informasi,2023,4.25,4.25,4.00,4.50
-si-23015@students.ithb.ac.id,Sistem Informasi,2023,3.85,4.00,3.75,4.10
-si-23028@students.ithb.ac.id,Sistem Informasi,2023,4.50,4.40,4.60,4.25
-si-24005@students.ithb.ac.id,Sistem Informasi,2024,3.25,3.40,3.00,3.50
-si-24018@students.ithb.ac.id,Sistem Informasi,2024,4.40,4.25,4.50,4.40
-si-24031@students.ithb.ac.id,Sistem Informasi,2024,4.00,4.10,3.90,4.25
-dkv-23004@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.75,3.50,3.25,3.60
-dkv-23017@students.ithb.ac.id,Desain Komunikasi Visual,2023,4.60,4.75,4.40,4.50
-dkv-23029@students.ithb.ac.id,Desain Komunikasi Visual,2023,4.25,4.10,4.00,4.40
-dkv-23041@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.40,3.75,3.50,3.25
-dkv-24010@students.ithb.ac.id,Desain Komunikasi Visual,2024,4.40,4.50,4.60,4.25
-dkv-24022@students.ithb.ac.id,Desain Komunikasi Visual,2024,3.90,4.00,4.25,4.10
-dkv-24035@students.ithb.ac.id,Desain Komunikasi Visual,2024,4.75,4.60,4.50,4.90
+si-23002@students.ithb.ac.id,Sistem Informasi,2023,3.90,4.10,4.40,4.25
+si-23003@students.ithb.ac.id,Sistem Informasi,2023,4.50,4.40,4.60,4.25
+si-23004@students.ithb.ac.id,Sistem Informasi,2023,3.85,4.00,3.75,4.10
+si-23005@students.ithb.ac.id,Sistem Informasi,2023,4.25,4.25,4.00,4.50
+si-23006@students.ithb.ac.id,Sistem Informasi,2023,4.10,4.25,4.40,4.00
+si-23007@students.ithb.ac.id,Sistem Informasi,2023,4.00,4.10,4.25,4.40
+si-23008@students.ithb.ac.id,Sistem Informasi,2023,4.40,4.50,4.25,4.60
+si-23009@students.ithb.ac.id,Sistem Informasi,2023,3.75,3.90,4.00,4.25
+si-23010@students.ithb.ac.id,Sistem Informasi,2023,4.60,4.25,4.40,4.50
+si-23011@students.ithb.ac.id,Sistem Informasi,2023,3.25,3.50,3.40,3.60
+si-23012@students.ithb.ac.id,Sistem Informasi,2023,4.25,4.40,4.10,4.50
+si-23013@students.ithb.ac.id,Sistem Informasi,2023,3.90,4.00,3.75,4.10
+si-23014@students.ithb.ac.id,Sistem Informasi,2023,4.75,4.60,4.50,4.90
+si-23015@students.ithb.ac.id,Sistem Informasi,2023,4.40,4.25,4.50,4.40
+si-23016@students.ithb.ac.id,Sistem Informasi,2023,4.00,4.10,3.90,4.25
+si-23017@students.ithb.ac.id,Sistem Informasi,2023,3.50,3.75,3.60,3.40
+si-23018@students.ithb.ac.id,Sistem Informasi,2023,4.10,3.90,4.25,4.00
+si-23019@students.ithb.ac.id,Sistem Informasi,2023,4.50,4.60,4.40,4.75
+si-23020@students.ithb.ac.id,Sistem Informasi,2023,3.75,4.00,4.25,3.90
+si-23021@students.ithb.ac.id,Sistem Informasi,2023,4.40,4.50,4.60,4.25
+si-23022@students.ithb.ac.id,Sistem Informasi,2023,3.00,3.25,3.50,3.40
+si-23023@students.ithb.ac.id,Sistem Informasi,2023,4.75,4.75,4.50,4.60
+si-23024@students.ithb.ac.id,Sistem Informasi,2023,4.25,4.10,4.00,4.40
+si-23025@students.ithb.ac.id,Sistem Informasi,2023,3.90,3.75,4.00,4.25
+si-23026@students.ithb.ac.id,Sistem Informasi,2023,4.60,4.50,4.75,4.60
+si-23027@students.ithb.ac.id,Sistem Informasi,2023,4.00,4.25,4.10,4.40
+si-23028@students.ithb.ac.id,Sistem Informasi,2023,3.50,3.60,3.75,3.50
+si-23029@students.ithb.ac.id,Sistem Informasi,2023,4.40,4.25,4.50,4.60
+si-23030@students.ithb.ac.id,Sistem Informasi,2023,3.75,3.50,3.25,3.60
+si-23031@students.ithb.ac.id,Sistem Informasi,2023,4.60,4.75,4.40,4.50
+si-23032@students.ithb.ac.id,Sistem Informasi,2023,4.25,4.10,4.00,4.40
+si-23033@students.ithb.ac.id,Sistem Informasi,2023,3.40,3.75,3.50,3.25
+si-23034@students.ithb.ac.id,Sistem Informasi,2023,4.40,4.50,4.60,4.25
+si-23035@students.ithb.ac.id,Sistem Informasi,2023,3.90,4.00,4.25,4.10
+si-23036@students.ithb.ac.id,Sistem Informasi,2023,4.75,4.60,4.50,4.90
+si-23037@students.ithb.ac.id,Sistem Informasi,2023,4.00,4.25,4.10,4.00
+si-23038@students.ithb.ac.id,Sistem Informasi,2023,3.50,3.25,3.75,3.60
+si-23039@students.ithb.ac.id,Sistem Informasi,2023,4.40,4.50,4.25,4.60
+si-23040@students.ithb.ac.id,Sistem Informasi,2023,4.60,4.40,4.75,4.50
+si-24001@students.ithb.ac.id,Sistem Informasi,2024,3.60,3.50,3.75,3.90
+si-24002@students.ithb.ac.id,Sistem Informasi,2024,3.25,3.40,3.00,3.50
+si-24003@students.ithb.ac.id,Sistem Informasi,2024,4.40,4.25,4.50,4.40
+si-24004@students.ithb.ac.id,Sistem Informasi,2024,4.00,4.10,3.90,4.25
+si-24005@students.ithb.ac.id,Sistem Informasi,2024,3.00,2.75,3.25,3.10
+si-24006@students.ithb.ac.id,Sistem Informasi,2024,4.25,4.40,4.50,4.25
+si-24007@students.ithb.ac.id,Sistem Informasi,2024,3.90,4.00,4.25,4.10
+si-24008@students.ithb.ac.id,Sistem Informasi,2024,4.75,4.60,4.50,4.90
+si-24009@students.ithb.ac.id,Sistem Informasi,2024,4.00,4.25,4.10,4.00
+si-24010@students.ithb.ac.id,Sistem Informasi,2024,3.50,3.25,3.75,3.60
+si-24011@students.ithb.ac.id,Sistem Informasi,2024,4.40,4.50,4.25,4.60
+si-24012@students.ithb.ac.id,Sistem Informasi,2024,4.60,4.40,4.75,4.50
+si-24013@students.ithb.ac.id,Sistem Informasi,2024,3.25,3.50,3.40,3.00
+si-24014@students.ithb.ac.id,Sistem Informasi,2024,4.25,4.10,4.00,4.40
+si-24015@students.ithb.ac.id,Sistem Informasi,2024,3.90,4.00,3.75,4.25
+si-24016@students.ithb.ac.id,Sistem Informasi,2024,4.50,4.60,4.40,4.75
+si-24017@students.ithb.ac.id,Sistem Informasi,2024,3.75,3.90,4.00,4.10
+si-24018@students.ithb.ac.id,Sistem Informasi,2024,4.10,4.25,4.40,4.00
+si-24019@students.ithb.ac.id,Sistem Informasi,2024,3.50,3.75,3.60,3.40
+si-24020@students.ithb.ac.id,Sistem Informasi,2024,4.40,4.25,4.50,4.40
+si-24021@students.ithb.ac.id,Sistem Informasi,2024,4.75,4.90,4.60,4.80
+si-24022@students.ithb.ac.id,Sistem Informasi,2024,3.00,2.75,3.25,3.10
+si-24023@students.ithb.ac.id,Sistem Informasi,2024,4.25,4.40,4.10,4.50
+si-24024@students.ithb.ac.id,Sistem Informasi,2024,3.90,3.75,4.00,4.25
+si-24025@students.ithb.ac.id,Sistem Informasi,2024,4.60,4.50,4.75,4.60
+si-24026@students.ithb.ac.id,Sistem Informasi,2024,4.00,4.10,4.25,4.40
+si-24027@students.ithb.ac.id,Sistem Informasi,2024,3.75,3.50,3.90,4.00
+si-24028@students.ithb.ac.id,Sistem Informasi,2024,4.25,4.40,4.50,4.25
+si-24029@students.ithb.ac.id,Sistem Informasi,2024,4.40,4.60,4.25,4.50
+si-24030@students.ithb.ac.id,Sistem Informasi,2024,3.75,3.50,3.25,3.60
+si-24031@students.ithb.ac.id,Sistem Informasi,2024,4.60,4.75,4.40,4.50
+si-24032@students.ithb.ac.id,Sistem Informasi,2024,4.25,4.10,4.00,4.40
+si-24033@students.ithb.ac.id,Sistem Informasi,2024,3.40,3.75,3.50,3.25
+si-24034@students.ithb.ac.id,Sistem Informasi,2024,4.40,4.50,4.60,4.25
+si-24035@students.ithb.ac.id,Sistem Informasi,2024,3.90,4.00,4.25,4.10
+si-24036@students.ithb.ac.id,Sistem Informasi,2024,4.75,4.60,4.50,4.90
+si-24037@students.ithb.ac.id,Sistem Informasi,2024,4.00,4.25,4.10,4.00
+si-24038@students.ithb.ac.id,Sistem Informasi,2024,3.50,3.25,3.75,3.60
+si-24039@students.ithb.ac.id,Sistem Informasi,2024,4.40,4.50,4.25,4.60
+si-24040@students.ithb.ac.id,Sistem Informasi,2024,4.60,4.40,4.75,4.50
+if-23001@students.ithb.ac.id,Informatika,2023,4.40,4.25,4.50,4.60
+if-23002@students.ithb.ac.id,Informatika,2023,4.00,4.25,4.10,4.40
+if-23003@students.ithb.ac.id,Informatika,2023,4.10,3.90,4.25,4.00
+if-23004@students.ithb.ac.id,Informatika,2023,3.50,3.60,3.75,3.50
+if-23005@students.ithb.ac.id,Informatika,2023,4.75,4.90,4.60,4.80
+if-23006@students.ithb.ac.id,Informatika,2023,4.40,4.60,4.25,4.50
+if-23007@students.ithb.ac.id,Informatika,2023,3.75,3.90,4.00,4.25
+if-23008@students.ithb.ac.id,Informatika,2023,4.60,4.25,4.40,4.50
+if-23009@students.ithb.ac.id,Informatika,2023,3.25,3.50,3.40,3.60
+if-23010@students.ithb.ac.id,Informatika,2023,4.25,4.40,4.10,4.50
+if-23011@students.ithb.ac.id,Informatika,2023,3.90,4.00,3.75,4.10
+if-23012@students.ithb.ac.id,Informatika,2023,4.75,4.60,4.50,4.90
+if-23013@students.ithb.ac.id,Informatika,2023,4.40,4.25,4.50,4.40
+if-23014@students.ithb.ac.id,Informatika,2023,4.00,4.10,3.90,4.25
+if-23015@students.ithb.ac.id,Informatika,2023,3.50,3.75,3.60,3.40
+if-23016@students.ithb.ac.id,Informatika,2023,4.10,3.90,4.25,4.00
+if-23017@students.ithb.ac.id,Informatika,2023,4.50,4.60,4.40,4.75
+if-23018@students.ithb.ac.id,Informatika,2023,3.75,4.00,4.25,3.90
+if-23019@students.ithb.ac.id,Informatika,2023,4.40,4.50,4.60,4.25
+if-23020@students.ithb.ac.id,Informatika,2023,3.00,3.25,3.50,3.40
+if-23021@students.ithb.ac.id,Informatika,2023,4.75,4.75,4.50,4.60
+if-23022@students.ithb.ac.id,Informatika,2023,4.25,4.10,4.00,4.40
+if-23023@students.ithb.ac.id,Informatika,2023,3.90,3.75,4.00,4.25
+if-23024@students.ithb.ac.id,Informatika,2023,4.60,4.50,4.75,4.60
+if-23025@students.ithb.ac.id,Informatika,2023,4.00,4.25,4.10,4.40
+if-23026@students.ithb.ac.id,Informatika,2023,3.50,3.60,3.75,3.50
+if-23027@students.ithb.ac.id,Informatika,2023,4.40,4.25,4.50,4.60
+if-23028@students.ithb.ac.id,Informatika,2023,3.75,3.50,3.25,3.60
+if-23029@students.ithb.ac.id,Informatika,2023,4.60,4.75,4.40,4.50
+if-23030@students.ithb.ac.id,Informatika,2023,4.25,4.10,4.00,4.40
+if-23031@students.ithb.ac.id,Informatika,2023,3.40,3.75,3.50,3.25
+if-23032@students.ithb.ac.id,Informatika,2023,4.40,4.50,4.60,4.25
+if-23033@students.ithb.ac.id,Informatika,2023,3.90,4.00,4.25,4.10
+if-23034@students.ithb.ac.id,Informatika,2023,4.75,4.60,4.50,4.90
+if-23035@students.ithb.ac.id,Informatika,2023,4.00,4.25,4.10,4.00
+if-23036@students.ithb.ac.id,Informatika,2023,3.50,3.25,3.75,3.60
+if-23037@students.ithb.ac.id,Informatika,2023,4.40,4.50,4.25,4.60
+if-23038@students.ithb.ac.id,Informatika,2023,4.60,4.40,4.75,4.50
+if-23039@students.ithb.ac.id,Informatika,2023,4.25,4.50,3.50,4.00
+if-23040@students.ithb.ac.id,Informatika,2023,3.90,4.10,4.40,4.25
+if-24001@students.ithb.ac.id,Informatika,2024,3.50,3.75,4.25,4.50
+if-24002@students.ithb.ac.id,Informatika,2024,3.75,4.00,4.25,3.90
+if-24003@students.ithb.ac.id,Informatika,2024,4.40,4.50,4.25,4.60
+if-24004@students.ithb.ac.id,Informatika,2024,3.00,3.25,3.50,3.40
+if-24005@students.ithb.ac.id,Informatika,2024,4.75,4.75,4.50,4.60
+if-24006@students.ithb.ac.id,Informatika,2024,3.75,3.90,4.00,4.10
+if-24007@students.ithb.ac.id,Informatika,2024,4.60,4.50,4.75,4.60
+if-24008@students.ithb.ac.id,Informatika,2024,3.75,3.90,4.00,4.25
+if-24009@students.ithb.ac.id,Informatika,2024,4.60,4.25,4.40,4.50
+if-24010@students.ithb.ac.id,Informatika,2024,3.25,3.50,3.40,3.60
+if-24011@students.ithb.ac.id,Informatika,2024,4.25,4.40,4.10,4.50
+if-24012@students.ithb.ac.id,Informatika,2024,3.90,4.00,3.75,4.10
+if-24013@students.ithb.ac.id,Informatika,2024,4.75,4.60,4.50,4.90
+if-24014@students.ithb.ac.id,Informatika,2024,4.40,4.25,4.50,4.40
+if-24015@students.ithb.ac.id,Informatika,2024,4.00,4.10,3.90,4.25
+if-24016@students.ithb.ac.id,Informatika,2024,3.50,3.75,3.60,3.40
+if-24017@students.ithb.ac.id,Informatika,2024,4.10,3.90,4.25,4.00
+if-24018@students.ithb.ac.id,Informatika,2024,4.50,4.60,4.40,4.75
+if-24019@students.ithb.ac.id,Informatika,2024,3.75,4.00,4.25,3.90
+if-24020@students.ithb.ac.id,Informatika,2024,4.40,4.50,4.60,4.25
+if-24021@students.ithb.ac.id,Informatika,2024,3.00,3.25,3.50,3.40
+if-24022@students.ithb.ac.id,Informatika,2024,4.75,4.75,4.50,4.60
+if-24023@students.ithb.ac.id,Informatika,2024,4.25,4.10,4.00,4.40
+if-24024@students.ithb.ac.id,Informatika,2024,3.90,3.75,4.00,4.25
+if-24025@students.ithb.ac.id,Informatika,2024,4.60,4.50,4.75,4.60
+if-24026@students.ithb.ac.id,Informatika,2024,4.00,4.25,4.10,4.40
+if-24027@students.ithb.ac.id,Informatika,2024,3.50,3.60,3.75,3.50
+if-24028@students.ithb.ac.id,Informatika,2024,4.40,4.25,4.50,4.60
+if-24029@students.ithb.ac.id,Informatika,2024,3.75,3.50,3.25,3.60
+if-24030@students.ithb.ac.id,Informatika,2024,4.60,4.75,4.40,4.50
+if-24031@students.ithb.ac.id,Informatika,2024,4.25,4.10,4.00,4.40
+if-24032@students.ithb.ac.id,Informatika,2024,3.40,3.75,3.50,3.25
+if-24033@students.ithb.ac.id,Informatika,2024,4.40,4.50,4.60,4.25
+if-24034@students.ithb.ac.id,Informatika,2024,3.90,4.00,4.25,4.10
+if-24035@students.ithb.ac.id,Informatika,2024,4.75,4.60,4.50,4.90
+if-24036@students.ithb.ac.id,Informatika,2024,4.00,4.25,4.10,4.00
+if-24037@students.ithb.ac.id,Informatika,2024,3.50,3.25,3.75,3.60
+if-24038@students.ithb.ac.id,Informatika,2024,4.40,4.50,4.25,4.60
+if-24039@students.ithb.ac.id,Informatika,2024,4.60,4.40,4.75,4.50
+if-24040@students.ithb.ac.id,Informatika,2024,4.25,4.50,3.50,4.00
+dkv-23001@students.ithb.ac.id,Desain Komunikasi Visual,2023,4.60,4.40,4.00,4.25
+dkv-23002@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.75,3.50,3.25,3.60
+dkv-23003@students.ithb.ac.id,Desain Komunikasi Visual,2023,4.60,4.75,4.40,4.50
+dkv-23004@students.ithb.ac.id,Desain Komunikasi Visual,2023,4.25,4.10,4.00,4.40
+dkv-23005@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.40,3.75,3.50,3.25
+dkv-23006@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.50,3.75,3.60,3.40
+dkv-23007@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.75,3.50,3.90,4.00
+dkv-23008@students.ithb.ac.id,Desain Komunikasi Visual,2023,4.40,4.50,4.60,4.25
+dkv-23009@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.90,4.00,4.25,4.10
+dkv-23010@students.ithb.ac.id,Desain Komunikasi Visual,2023,4.75,4.60,4.50,4.90
+dkv-23011@students.ithb.ac.id,Desain Komunikasi Visual,2023,4.00,4.25,4.10,4.00
+dkv-23012@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.50,3.25,3.75,3.60
+dkv-23013@students.ithb.ac.id,Desain Komunikasi Visual,2023,4.40,4.50,4.25,4.60
+dkv-23014@students.ithb.ac.id,Desain Komunikasi Visual,2023,4.60,4.40,4.75,4.50
+dkv-23015@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.25,3.50,3.40,3.00
+dkv-23016@students.ithb.ac.id,Desain Komunikasi Visual,2023,4.25,4.10,4.00,4.40
+dkv-23017@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.90,4.00,3.75,4.25
+dkv-23018@students.ithb.ac.id,Desain Komunikasi Visual,2023,4.50,4.60,4.40,4.75
+dkv-23019@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.75,3.90,4.00,4.10
+dkv-23020@students.ithb.ac.id,Desain Komunikasi Visual,2023,4.10,4.25,4.40,4.00
+dkv-23021@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.50,3.75,3.60,3.40
+dkv-23022@students.ithb.ac.id,Desain Komunikasi Visual,2023,4.40,4.25,4.50,4.40
+dkv-23023@students.ithb.ac.id,Desain Komunikasi Visual,2023,4.75,4.90,4.60,4.80
+dkv-23024@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.00,2.75,3.25,3.10
+dkv-23025@students.ithb.ac.id,Desain Komunikasi Visual,2023,4.25,4.40,4.10,4.50
+dkv-23026@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.90,3.75,4.00,4.25
+dkv-23027@students.ithb.ac.id,Desain Komunikasi Visual,2023,4.60,4.50,4.75,4.60
+dkv-23028@students.ithb.ac.id,Desain Komunikasi Visual,2023,4.00,4.10,4.25,4.40
+dkv-23029@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.75,3.50,3.90,4.00
+dkv-23030@students.ithb.ac.id,Desain Komunikasi Visual,2023,4.25,4.40,4.50,4.25
+dkv-23031@students.ithb.ac.id,Desain Komunikasi Visual,2023,4.40,4.60,4.25,4.50
+dkv-23032@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.75,3.50,3.25,3.60
+dkv-23033@students.ithb.ac.id,Desain Komunikasi Visual,2023,4.60,4.75,4.40,4.50
+dkv-23034@students.ithb.ac.id,Desain Komunikasi Visual,2023,4.25,4.10,4.00,4.40
+dkv-23035@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.40,3.75,3.50,3.25
+dkv-24001@students.ithb.ac.id,Desain Komunikasi Visual,2024,3.00,3.25,3.50,3.40
+dkv-24002@students.ithb.ac.id,Desain Komunikasi Visual,2024,4.40,4.50,4.60,4.25
+dkv-24003@students.ithb.ac.id,Desain Komunikasi Visual,2024,3.90,4.00,4.25,4.10
+dkv-24004@students.ithb.ac.id,Desain Komunikasi Visual,2024,4.75,4.60,4.50,4.90
+dkv-24005@students.ithb.ac.id,Desain Komunikasi Visual,2024,4.25,4.40,4.10,4.50
+dkv-24006@students.ithb.ac.id,Desain Komunikasi Visual,2024,3.75,3.90,4.00,4.25
+dkv-24007@students.ithb.ac.id,Desain Komunikasi Visual,2024,4.60,4.25,4.40,4.50
+dkv-24008@students.ithb.ac.id,Desain Komunikasi Visual,2024,3.25,3.50,3.40,3.60
+dkv-24009@students.ithb.ac.id,Desain Komunikasi Visual,2024,4.25,4.40,4.10,4.50
+dkv-24010@students.ithb.ac.id,Desain Komunikasi Visual,2024,3.90,4.00,3.75,4.10
+dkv-24011@students.ithb.ac.id,Desain Komunikasi Visual,2024,4.75,4.60,4.50,4.90
+dkv-24012@students.ithb.ac.id,Desain Komunikasi Visual,2024,4.40,4.25,4.50,4.40
+dkv-24013@students.ithb.ac.id,Desain Komunikasi Visual,2024,4.00,4.10,3.90,4.25
+dkv-24014@students.ithb.ac.id,Desain Komunikasi Visual,2024,3.50,3.75,3.60,3.40
+dkv-24015@students.ithb.ac.id,Desain Komunikasi Visual,2024,4.10,3.90,4.25,4.00
+dkv-24016@students.ithb.ac.id,Desain Komunikasi Visual,2024,4.50,4.60,4.40,4.75
+dkv-24017@students.ithb.ac.id,Desain Komunikasi Visual,2024,3.75,4.00,4.25,3.90
+dkv-24018@students.ithb.ac.id,Desain Komunikasi Visual,2024,4.40,4.50,4.60,4.25
+dkv-24019@students.ithb.ac.id,Desain Komunikasi Visual,2024,3.00,3.25,3.50,3.40
+dkv-24020@students.ithb.ac.id,Desain Komunikasi Visual,2024,4.75,4.75,4.50,4.60
+dkv-24021@students.ithb.ac.id,Desain Komunikasi Visual,2024,4.25,4.10,4.00,4.40
+dkv-24022@students.ithb.ac.id,Desain Komunikasi Visual,2024,3.90,3.75,4.00,4.25
+dkv-24023@students.ithb.ac.id,Desain Komunikasi Visual,2024,4.60,4.50,4.75,4.60
+dkv-24024@students.ithb.ac.id,Desain Komunikasi Visual,2024,4.00,4.25,4.10,4.40
+dkv-24025@students.ithb.ac.id,Desain Komunikasi Visual,2024,3.50,3.60,3.75,3.50
+dkv-24026@students.ithb.ac.id,Desain Komunikasi Visual,2024,4.40,4.25,4.50,4.60
+dkv-24027@students.ithb.ac.id,Desain Komunikasi Visual,2024,3.75,3.50,3.25,3.60
+dkv-24028@students.ithb.ac.id,Desain Komunikasi Visual,2024,4.60,4.75,4.40,4.50
+dkv-24029@students.ithb.ac.id,Desain Komunikasi Visual,2024,4.25,4.10,4.00,4.40
+dkv-24030@students.ithb.ac.id,Desain Komunikasi Visual,2024,3.40,3.75,3.50,3.25
+dkv-24031@students.ithb.ac.id,Desain Komunikasi Visual,2024,4.40,4.50,4.60,4.25
+dkv-24032@students.ithb.ac.id,Desain Komunikasi Visual,2024,3.90,4.00,4.25,4.10
+dkv-24033@students.ithb.ac.id,Desain Komunikasi Visual,2024,4.75,4.60,4.50,4.90
+dkv-24034@students.ithb.ac.id,Desain Komunikasi Visual,2024,4.00,4.25,4.10,4.00
+dkv-24035@students.ithb.ac.id,Desain Komunikasi Visual,2024,3.50,3.25,3.75,3.60
+mg-23001@students.ithb.ac.id,Manajemen,2023,4.75,4.50,4.25,4.40
 mg-23002@students.ithb.ac.id,Manajemen,2023,4.00,4.25,4.10,4.00
-mg-23014@students.ithb.ac.id,Manajemen,2023,3.50,3.25,3.75,3.60
-mg-23027@students.ithb.ac.id,Manajemen,2023,4.40,4.50,4.25,4.60
-mg-23038@students.ithb.ac.id,Manajemen,2023,4.60,4.40,4.75,4.50
-mg-24007@students.ithb.ac.id,Manajemen,2024,3.25,3.50,3.40,3.00
-mg-24019@students.ithb.ac.id,Manajemen,2024,4.25,4.10,4.00,4.40
-mg-24031@students.ithb.ac.id,Manajemen,2024,3.90,4.00,3.75,4.25
-mg-24044@students.ithb.ac.id,Manajemen,2024,4.50,4.60,4.40,4.75
-if-24040@students.ithb.ac.id,Informatika,2024,3.75,3.90,4.00,4.10
-si-23055@students.ithb.ac.id,Sistem Informasi,2023,4.10,4.25,4.40,4.00
-dkv-23050@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.50,3.75,3.60,3.40
-mg-24050@students.ithb.ac.id,Manajemen,2024,4.40,4.25,4.50,4.40
-if-23055@students.ithb.ac.id,Informatika,2023,4.75,4.90,4.60,4.80
-si-24042@students.ithb.ac.id,Sistem Informasi,2024,3.00,2.75,3.25,3.10
-dkv-24048@students.ithb.ac.id,Desain Komunikasi Visual,2024,4.25,4.40,4.10,4.50
-mg-23045@students.ithb.ac.id,Manajemen,2023,3.90,3.75,4.00,4.25
-if-24058@students.ithb.ac.id,Informatika,2024,4.60,4.50,4.75,4.60
-si-23060@students.ithb.ac.id,Sistem Informasi,2023,4.00,4.10,4.25,4.40
-dkv-23058@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.75,3.50,3.90,4.00
-mg-24058@students.ithb.ac.id,Manajemen,2024,4.25,4.40,4.50,4.25
-if-23060@students.ithb.ac.id,Informatika,2023,4.40,4.60,4.25,4.50
+mg-23003@students.ithb.ac.id,Manajemen,2023,3.50,3.25,3.75,3.60
+mg-23004@students.ithb.ac.id,Manajemen,2023,4.40,4.50,4.25,4.60
+mg-23005@students.ithb.ac.id,Manajemen,2023,4.60,4.40,4.75,4.50
+mg-23006@students.ithb.ac.id,Manajemen,2023,3.90,3.75,4.00,4.25
+mg-23007@students.ithb.ac.id,Manajemen,2023,3.75,3.90,4.00,4.25
+mg-23008@students.ithb.ac.id,Manajemen,2023,4.60,4.25,4.40,4.50
+mg-23009@students.ithb.ac.id,Manajemen,2023,3.25,3.50,3.40,3.60
+mg-23010@students.ithb.ac.id,Manajemen,2023,4.25,4.40,4.10,4.50
+mg-23011@students.ithb.ac.id,Manajemen,2023,3.90,4.00,3.75,4.10
+mg-23012@students.ithb.ac.id,Manajemen,2023,4.75,4.60,4.50,4.90
+mg-23013@students.ithb.ac.id,Manajemen,2023,4.40,4.25,4.50,4.40
+mg-23014@students.ithb.ac.id,Manajemen,2023,4.00,4.10,3.90,4.25
+mg-23015@students.ithb.ac.id,Manajemen,2023,3.50,3.75,3.60,3.40
+mg-23016@students.ithb.ac.id,Manajemen,2023,4.10,3.90,4.25,4.00
+mg-23017@students.ithb.ac.id,Manajemen,2023,4.50,4.60,4.40,4.75
+mg-23018@students.ithb.ac.id,Manajemen,2023,3.75,4.00,4.25,3.90
+mg-23019@students.ithb.ac.id,Manajemen,2023,4.40,4.50,4.60,4.25
+mg-23020@students.ithb.ac.id,Manajemen,2023,3.00,3.25,3.50,3.40
+mg-23021@students.ithb.ac.id,Manajemen,2023,4.75,4.75,4.50,4.60
+mg-23022@students.ithb.ac.id,Manajemen,2023,4.25,4.10,4.00,4.40
+mg-23023@students.ithb.ac.id,Manajemen,2023,3.90,3.75,4.00,4.25
+mg-23024@students.ithb.ac.id,Manajemen,2023,4.60,4.50,4.75,4.60
+mg-23025@students.ithb.ac.id,Manajemen,2023,4.00,4.25,4.10,4.40
+mg-23026@students.ithb.ac.id,Manajemen,2023,3.50,3.60,3.75,3.50
+mg-23027@students.ithb.ac.id,Manajemen,2023,4.40,4.25,4.50,4.60
+mg-23028@students.ithb.ac.id,Manajemen,2023,3.75,3.50,3.25,3.60
+mg-23029@students.ithb.ac.id,Manajemen,2023,4.60,4.75,4.40,4.50
+mg-23030@students.ithb.ac.id,Manajemen,2023,4.25,4.10,4.00,4.40
+mg-23031@students.ithb.ac.id,Manajemen,2023,3.40,3.75,3.50,3.25
+mg-23032@students.ithb.ac.id,Manajemen,2023,4.40,4.50,4.60,4.25
+mg-23033@students.ithb.ac.id,Manajemen,2023,3.90,4.00,4.25,4.10
+mg-23034@students.ithb.ac.id,Manajemen,2023,4.75,4.60,4.50,4.90
+mg-23035@students.ithb.ac.id,Manajemen,2023,4.00,4.25,4.10,4.00
+mg-24001@students.ithb.ac.id,Manajemen,2024,3.25,3.00,3.75,3.50
+mg-24002@students.ithb.ac.id,Manajemen,2024,3.25,3.50,3.40,3.00
+mg-24003@students.ithb.ac.id,Manajemen,2024,4.25,4.10,4.00,4.40
+mg-24004@students.ithb.ac.id,Manajemen,2024,3.90,4.00,3.75,4.25
+mg-24005@students.ithb.ac.id,Manajemen,2024,4.50,4.60,4.40,4.75
+mg-24006@students.ithb.ac.id,Manajemen,2024,4.40,4.25,4.50,4.40
+mg-24007@students.ithb.ac.id,Manajemen,2024,4.25,4.40,4.50,4.25
+mg-24008@students.ithb.ac.id,Manajemen,2024,3.75,3.90,4.00,4.25
+mg-24009@students.ithb.ac.id,Manajemen,2024,4.60,4.25,4.40,4.50
+mg-24010@students.ithb.ac.id,Manajemen,2024,3.25,3.50,3.40,3.60
+mg-24011@students.ithb.ac.id,Manajemen,2024,4.25,4.40,4.10,4.50
+mg-24012@students.ithb.ac.id,Manajemen,2024,3.90,4.00,3.75,4.10
+mg-24013@students.ithb.ac.id,Manajemen,2024,4.75,4.60,4.50,4.90
+mg-24014@students.ithb.ac.id,Manajemen,2024,4.40,4.25,4.50,4.40
+mg-24015@students.ithb.ac.id,Manajemen,2024,4.00,4.10,3.90,4.25
+mg-24016@students.ithb.ac.id,Manajemen,2024,3.50,3.75,3.60,3.40
+mg-24017@students.ithb.ac.id,Manajemen,2024,4.10,3.90,4.25,4.00
+mg-24018@students.ithb.ac.id,Manajemen,2024,4.50,4.60,4.40,4.75
+mg-24019@students.ithb.ac.id,Manajemen,2024,3.75,4.00,4.25,3.90
+mg-24020@students.ithb.ac.id,Manajemen,2024,4.40,4.50,4.60,4.25
+mg-24021@students.ithb.ac.id,Manajemen,2024,3.00,3.25,3.50,3.40
+mg-24022@students.ithb.ac.id,Manajemen,2024,4.75,4.75,4.50,4.60
+mg-24023@students.ithb.ac.id,Manajemen,2024,4.25,4.10,4.00,4.40
+mg-24024@students.ithb.ac.id,Manajemen,2024,3.90,3.75,4.00,4.25
+mg-24025@students.ithb.ac.id,Manajemen,2024,4.60,4.50,4.75,4.60
+mg-24026@students.ithb.ac.id,Manajemen,2024,4.00,4.25,4.10,4.40
+mg-24027@students.ithb.ac.id,Manajemen,2024,3.50,3.60,3.75,3.50
+mg-24028@students.ithb.ac.id,Manajemen,2024,4.40,4.25,4.50,4.60
+mg-24029@students.ithb.ac.id,Manajemen,2024,3.75,3.50,3.25,3.60
+mg-24030@students.ithb.ac.id,Manajemen,2024,4.60,4.75,4.40,4.50
+mg-24031@students.ithb.ac.id,Manajemen,2024,4.25,4.10,4.00,4.40
+mg-24032@students.ithb.ac.id,Manajemen,2024,3.40,3.75,3.50,3.25
+mg-24033@students.ithb.ac.id,Manajemen,2024,4.40,4.50,4.60,4.25
+mg-24034@students.ithb.ac.id,Manajemen,2024,3.90,4.00,4.25,4.10
+mg-24035@students.ithb.ac.id,Manajemen,2024,4.75,4.60,4.50,4.90
+si-23060@students.ithb.ac.id,Sistem Informasi,2023,3.5,3.25,3.75,3.6
+si-23061@students.ithb.ac.id,Sistem Informasi,2023,3.8,3.6,3.4,3.7
+si-23062@students.ithb.ac.id,Sistem Informasi,2023,3.25,3.5,3,3.4
+si-23063@students.ithb.ac.id,Sistem Informasi,2023,3.7,3.85,3.6,3.75
+si-23064@students.ithb.ac.id,Sistem Informasi,2023,3.4,3.6,3.8,3.5
+si-23065@students.ithb.ac.id,Sistem Informasi,2023,3,3.25,3.5,3.1
+si-23066@students.ithb.ac.id,Sistem Informasi,2023,3.6,3.75,3.5,3.8
+si-23067@students.ithb.ac.id,Sistem Informasi,2023,3.85,3.7,3.9,3.75
+si-23068@students.ithb.ac.id,Sistem Informasi,2023,3.25,3.4,3.6,3.5
+si-23069@students.ithb.ac.id,Sistem Informasi,2023,3.75,3.5,3.25,3.6
+si-23070@students.ithb.ac.id,Sistem Informasi,2023,3.5,3.7,3.8,3.6
+si-23071@students.ithb.ac.id,Sistem Informasi,2023,2.75,3,2.9,3.1
+si-23072@students.ithb.ac.id,Sistem Informasi,2023,3.6,3.8,3.5,3.7
+si-23073@students.ithb.ac.id,Sistem Informasi,2023,3.9,3.75,3.85,3.7
+si-23074@students.ithb.ac.id,Sistem Informasi,2023,3.25,3.5,3.4,3.3
+si-23075@students.ithb.ac.id,Sistem Informasi,2023,3.75,3.6,3.8,3.5
+si-23076@students.ithb.ac.id,Sistem Informasi,2023,3.5,3.25,3.6,3.4
+si-23077@students.ithb.ac.id,Sistem Informasi,2023,3.8,3.9,3.7,3.85
+si-23078@students.ithb.ac.id,Sistem Informasi,2023,3.4,3.6,3.5,3.7
+si-23079@students.ithb.ac.id,Sistem Informasi,2023,3,3.25,3.1,3.4
+si-23080@students.ithb.ac.id,Sistem Informasi,2023,3.6,3.5,3.7,3.8
+si-23081@students.ithb.ac.id,Sistem Informasi,2023,3.9,3.75,3.85,3.95
+si-23082@students.ithb.ac.id,Sistem Informasi,2023,3.25,3.4,3.5,3.3
+si-23083@students.ithb.ac.id,Sistem Informasi,2023,3.75,3.6,3.5,3.8
+si-23084@students.ithb.ac.id,Sistem Informasi,2023,3.5,3.7,3.4,3.6
+si-23085@students.ithb.ac.id,Sistem Informasi,2023,2.8,3,2.9,2.75
+si-23086@students.ithb.ac.id,Sistem Informasi,2023,3.8,3.6,3.75,3.5
+si-23087@students.ithb.ac.id,Sistem Informasi,2023,3.4,3.5,3.6,3.7
+si-23088@students.ithb.ac.id,Sistem Informasi,2023,3.7,3.85,3.6,3.75
+si-23089@students.ithb.ac.id,Sistem Informasi,2023,3.25,3,3.4,3.5
+si-23090@students.ithb.ac.id,Sistem Informasi,2023,3.6,3.75,3.5,3.8
+si-23091@students.ithb.ac.id,Sistem Informasi,2023,3.85,3.7,3.9,3.75
+si-23092@students.ithb.ac.id,Sistem Informasi,2023,3,3.25,3.1,2.9
+si-23093@students.ithb.ac.id,Sistem Informasi,2023,3.75,3.5,3.6,3.8
+si-23094@students.ithb.ac.id,Sistem Informasi,2023,3.5,3.7,3.8,3.6
+si-23095@students.ithb.ac.id,Sistem Informasi,2023,3.4,3.25,3.5,3.6
+si-23096@students.ithb.ac.id,Sistem Informasi,2023,3.8,3.6,3.75,3.9
+si-23097@students.ithb.ac.id,Sistem Informasi,2023,3.25,3.4,3.6,3.5
+si-23098@students.ithb.ac.id,Sistem Informasi,2023,3.7,3.5,3.6,3.75
+si-23099@students.ithb.ac.id,Sistem Informasi,2023,3,3.25,3.4,3.1
+si-24060@students.ithb.ac.id,Sistem Informasi,2024,3.5,3.6,3.4,3.7
+si-24061@students.ithb.ac.id,Sistem Informasi,2024,3.75,3.5,3.8,3.6
+si-24062@students.ithb.ac.id,Sistem Informasi,2024,3.25,3.4,3.5,3.3
+si-24063@students.ithb.ac.id,Sistem Informasi,2024,3.8,3.6,3.7,3.5
+si-24064@students.ithb.ac.id,Sistem Informasi,2024,3.4,3.5,3.6,3.75
+si-24065@students.ithb.ac.id,Sistem Informasi,2024,2.9,3.1,3,3.25
+si-24066@students.ithb.ac.id,Sistem Informasi,2024,3.6,3.75,3.5,3.8
+si-24067@students.ithb.ac.id,Sistem Informasi,2024,3.85,3.7,3.75,3.9
+si-24068@students.ithb.ac.id,Sistem Informasi,2024,3.25,3.4,3.35,3.5
+si-24069@students.ithb.ac.id,Sistem Informasi,2024,3.7,3.5,3.6,3.8
+if-23060@students.ithb.ac.id,Informatika,2023,3.5,3.25,3.75,3.6
+if-23061@students.ithb.ac.id,Informatika,2023,3.8,3.6,3.4,3.7
+if-23062@students.ithb.ac.id,Informatika,2023,3.25,3.5,3,3.4
+if-23063@students.ithb.ac.id,Informatika,2023,3.7,3.85,3.6,3.75
+if-23064@students.ithb.ac.id,Informatika,2023,3.4,3.6,3.8,3.5
+if-23065@students.ithb.ac.id,Informatika,2023,3,3.25,3.5,3.1
+if-23066@students.ithb.ac.id,Informatika,2023,3.6,3.75,3.5,3.8
+if-23067@students.ithb.ac.id,Informatika,2023,3.85,3.7,3.9,3.75
+if-23068@students.ithb.ac.id,Informatika,2023,3.25,3.4,3.6,3.5
+if-23069@students.ithb.ac.id,Informatika,2023,3.75,3.5,3.25,3.6
+if-23070@students.ithb.ac.id,Informatika,2023,3.5,3.7,3.8,3.6
+if-23071@students.ithb.ac.id,Informatika,2023,2.75,3,2.9,3.1
+if-23072@students.ithb.ac.id,Informatika,2023,3.6,3.8,3.5,3.7
+if-23073@students.ithb.ac.id,Informatika,2023,3.9,3.75,3.85,3.7
+if-23074@students.ithb.ac.id,Informatika,2023,3.25,3.5,3.4,3.3
+if-23075@students.ithb.ac.id,Informatika,2023,3.75,3.6,3.8,3.5
+if-23076@students.ithb.ac.id,Informatika,2023,3.5,3.25,3.6,3.4
+if-23077@students.ithb.ac.id,Informatika,2023,3.8,3.9,3.7,3.85
+if-23078@students.ithb.ac.id,Informatika,2023,3.4,3.6,3.5,3.7
+if-23079@students.ithb.ac.id,Informatika,2023,3,3.25,3.1,3.4
+if-23080@students.ithb.ac.id,Informatika,2023,3.6,3.5,3.7,3.8
+if-23081@students.ithb.ac.id,Informatika,2023,3.9,3.75,3.85,3.95
+if-23082@students.ithb.ac.id,Informatika,2023,3.25,3.4,3.5,3.3
+if-23083@students.ithb.ac.id,Informatika,2023,3.75,3.6,3.5,3.8
+if-23084@students.ithb.ac.id,Informatika,2023,3.5,3.7,3.4,3.6
+if-23085@students.ithb.ac.id,Informatika,2023,2.8,3,2.9,2.75
+if-23086@students.ithb.ac.id,Informatika,2023,3.8,3.6,3.75,3.5
+if-23087@students.ithb.ac.id,Informatika,2023,3.4,3.5,3.6,3.7
+if-23088@students.ithb.ac.id,Informatika,2023,3.7,3.85,3.6,3.75
+if-23089@students.ithb.ac.id,Informatika,2023,3.25,3,3.4,3.5
+if-23090@students.ithb.ac.id,Informatika,2023,3.6,3.75,3.5,3.8
+if-23091@students.ithb.ac.id,Informatika,2023,3.85,3.7,3.9,3.75
+if-23092@students.ithb.ac.id,Informatika,2023,3,3.25,3.1,2.9
+if-23093@students.ithb.ac.id,Informatika,2023,3.75,3.5,3.6,3.8
+if-23094@students.ithb.ac.id,Informatika,2023,3.5,3.7,3.8,3.6
+if-23095@students.ithb.ac.id,Informatika,2023,3.4,3.25,3.5,3.6
+if-23096@students.ithb.ac.id,Informatika,2023,3.8,3.6,3.75,3.9
+if-23097@students.ithb.ac.id,Informatika,2023,3.25,3.4,3.6,3.5
+if-23098@students.ithb.ac.id,Informatika,2023,3.7,3.5,3.6,3.75
+if-23099@students.ithb.ac.id,Informatika,2023,3,3.25,3.4,3.1
+if-24060@students.ithb.ac.id,Informatika,2024,3.5,3.6,3.4,3.7
+if-24061@students.ithb.ac.id,Informatika,2024,3.75,3.5,3.8,3.6
+if-24062@students.ithb.ac.id,Informatika,2024,3.25,3.4,3.5,3.3
+if-24063@students.ithb.ac.id,Informatika,2024,3.8,3.6,3.7,3.5
+if-24064@students.ithb.ac.id,Informatika,2024,3.4,3.5,3.6,3.75
+if-24065@students.ithb.ac.id,Informatika,2024,2.9,3.1,3,3.25
+if-24066@students.ithb.ac.id,Informatika,2024,3.6,3.75,3.5,3.8
+if-24067@students.ithb.ac.id,Informatika,2024,3.85,3.7,3.75,3.9
+if-24068@students.ithb.ac.id,Informatika,2024,3.25,3.4,3.35,3.5
+if-24069@students.ithb.ac.id,Informatika,2024,3.7,3.5,3.6,3.8
+dkv-23060@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.5,3.25,3.75,3.6
+dkv-23061@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.8,3.6,3.4,3.7
+dkv-23062@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.25,3.5,3,3.4
+dkv-23063@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.7,3.85,3.6,3.75
+dkv-23064@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.4,3.6,3.8,3.5
+dkv-23065@students.ithb.ac.id,Desain Komunikasi Visual,2023,3,3.25,3.5,3.1
+dkv-23066@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.6,3.75,3.5,3.8
+dkv-23067@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.85,3.7,3.9,3.75
+dkv-23068@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.25,3.4,3.6,3.5
+dkv-23069@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.75,3.5,3.25,3.6
+dkv-23070@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.5,3.7,3.8,3.6
+dkv-23071@students.ithb.ac.id,Desain Komunikasi Visual,2023,2.75,3,2.9,3.1
+dkv-23072@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.6,3.8,3.5,3.7
+dkv-23073@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.9,3.75,3.85,3.7
+dkv-23074@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.25,3.5,3.4,3.3
+dkv-23075@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.75,3.6,3.8,3.5
+dkv-23076@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.5,3.25,3.6,3.4
+dkv-23077@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.8,3.9,3.7,3.85
+dkv-23078@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.4,3.6,3.5,3.7
+dkv-23079@students.ithb.ac.id,Desain Komunikasi Visual,2023,3,3.25,3.1,3.4
+dkv-23080@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.6,3.5,3.7,3.8
+dkv-23081@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.9,3.75,3.85,3.95
+dkv-23082@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.25,3.4,3.5,3.3
+dkv-23083@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.75,3.6,3.5,3.8
+dkv-23084@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.5,3.7,3.4,3.6
+dkv-23085@students.ithb.ac.id,Desain Komunikasi Visual,2023,2.8,3,2.9,2.75
+dkv-23086@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.8,3.6,3.75,3.5
+dkv-23087@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.4,3.5,3.6,3.7
+dkv-23088@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.7,3.85,3.6,3.75
+dkv-23089@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.25,3,3.4,3.5
+dkv-23090@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.6,3.75,3.5,3.8
+dkv-23091@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.85,3.7,3.9,3.75
+dkv-23092@students.ithb.ac.id,Desain Komunikasi Visual,2023,3,3.25,3.1,2.9
+dkv-23093@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.75,3.5,3.6,3.8
+dkv-23094@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.5,3.7,3.8,3.6
+dkv-23095@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.4,3.25,3.5,3.6
+dkv-23096@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.8,3.6,3.75,3.9
+dkv-23097@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.25,3.4,3.6,3.5
+dkv-23098@students.ithb.ac.id,Desain Komunikasi Visual,2023,3.7,3.5,3.6,3.75
+dkv-23099@students.ithb.ac.id,Desain Komunikasi Visual,2023,3,3.25,3.4,3.1
+dkv-24060@students.ithb.ac.id,Desain Komunikasi Visual,2024,3.5,3.6,3.4,3.7
+dkv-24061@students.ithb.ac.id,Desain Komunikasi Visual,2024,3.75,3.5,3.8,3.6
+dkv-24062@students.ithb.ac.id,Desain Komunikasi Visual,2024,3.25,3.4,3.5,3.3
+dkv-24063@students.ithb.ac.id,Desain Komunikasi Visual,2024,3.8,3.6,3.7,3.5
+dkv-24064@students.ithb.ac.id,Desain Komunikasi Visual,2024,3.4,3.5,3.6,3.75
+dkv-24065@students.ithb.ac.id,Desain Komunikasi Visual,2024,2.9,3.1,3,3.25
+dkv-24066@students.ithb.ac.id,Desain Komunikasi Visual,2024,3.6,3.75,3.5,3.8
+dkv-24067@students.ithb.ac.id,Desain Komunikasi Visual,2024,3.85,3.7,3.75,3.9
+dkv-24068@students.ithb.ac.id,Desain Komunikasi Visual,2024,3.25,3.4,3.35,3.5
+dkv-24069@students.ithb.ac.id,Desain Komunikasi Visual,2024,3.7,3.5,3.6,3.8
+mg-23060@students.ithb.ac.id,Manajemen,2023,3.5,3.25,3.75,3.6
+mg-23061@students.ithb.ac.id,Manajemen,2023,3.8,3.6,3.4,3.7
+mg-23062@students.ithb.ac.id,Manajemen,2023,3.25,3.5,3,3.4
+mg-23063@students.ithb.ac.id,Manajemen,2023,3.7,3.85,3.6,3.75
+mg-23064@students.ithb.ac.id,Manajemen,2023,3.4,3.6,3.8,3.5
+mg-23065@students.ithb.ac.id,Manajemen,2023,3,3.25,3.5,3.1
+mg-23066@students.ithb.ac.id,Manajemen,2023,3.6,3.75,3.5,3.8
+mg-23067@students.ithb.ac.id,Manajemen,2023,3.85,3.7,3.9,3.75
+mg-23068@students.ithb.ac.id,Manajemen,2023,3.25,3.4,3.6,3.5
+mg-23069@students.ithb.ac.id,Manajemen,2023,3.75,3.5,3.25,3.6
+mg-23070@students.ithb.ac.id,Manajemen,2023,3.5,3.7,3.8,3.6
+mg-23071@students.ithb.ac.id,Manajemen,2023,2.75,3,2.9,3.1
+mg-23072@students.ithb.ac.id,Manajemen,2023,3.6,3.8,3.5,3.7
+mg-23073@students.ithb.ac.id,Manajemen,2023,3.9,3.75,3.85,3.7
+mg-23074@students.ithb.ac.id,Manajemen,2023,3.25,3.5,3.4,3.3
+mg-23075@students.ithb.ac.id,Manajemen,2023,3.75,3.6,3.8,3.5
+mg-23076@students.ithb.ac.id,Manajemen,2023,3.5,3.25,3.6,3.4
+mg-23077@students.ithb.ac.id,Manajemen,2023,3.8,3.9,3.7,3.85
+mg-23078@students.ithb.ac.id,Manajemen,2023,3.4,3.6,3.5,3.7
+mg-23079@students.ithb.ac.id,Manajemen,2023,3,3.25,3.1,3.4
+mg-23080@students.ithb.ac.id,Manajemen,2023,3.6,3.5,3.7,3.8
+mg-23081@students.ithb.ac.id,Manajemen,2023,3.9,3.75,3.85,3.95
+mg-23082@students.ithb.ac.id,Manajemen,2023,3.25,3.4,3.5,3.3
+mg-23083@students.ithb.ac.id,Manajemen,2023,3.75,3.6,3.5,3.8
+mg-23084@students.ithb.ac.id,Manajemen,2023,3.5,3.7,3.4,3.6
+mg-23085@students.ithb.ac.id,Manajemen,2023,2.8,3,2.9,2.75
+mg-23086@students.ithb.ac.id,Manajemen,2023,3.8,3.6,3.75,3.5
+mg-23087@students.ithb.ac.id,Manajemen,2023,3.4,3.5,3.6,3.7
+mg-23088@students.ithb.ac.id,Manajemen,2023,3.7,3.85,3.6,3.75
+mg-23089@students.ithb.ac.id,Manajemen,2023,3.25,3,3.4,3.5
+mg-23090@students.ithb.ac.id,Manajemen,2023,3.6,3.75,3.5,3.8
+mg-23091@students.ithb.ac.id,Manajemen,2023,3.85,3.7,3.9,3.75
+mg-23092@students.ithb.ac.id,Manajemen,2023,3,3.25,3.1,2.9
+mg-23093@students.ithb.ac.id,Manajemen,2023,3.75,3.5,3.6,3.8
+mg-23094@students.ithb.ac.id,Manajemen,2023,3.5,3.7,3.8,3.6
+mg-23095@students.ithb.ac.id,Manajemen,2023,3.4,3.25,3.5,3.6
+mg-23096@students.ithb.ac.id,Manajemen,2023,3.8,3.6,3.75,3.9
+mg-23097@students.ithb.ac.id,Manajemen,2023,3.25,3.4,3.6,3.5
+mg-23098@students.ithb.ac.id,Manajemen,2023,3.7,3.5,3.6,3.75
+mg-23099@students.ithb.ac.id,Manajemen,2023,3,3.25,3.4,3.1
+mg-24060@students.ithb.ac.id,Manajemen,2024,3.5,3.6,3.4,3.7
+mg-24061@students.ithb.ac.id,Manajemen,2024,3.75,3.5,3.8,3.6
+mg-24062@students.ithb.ac.id,Manajemen,2024,3.25,3.4,3.5,3.3
+mg-24063@students.ithb.ac.id,Manajemen,2024,3.8,3.6,3.7,3.5
+mg-24064@students.ithb.ac.id,Manajemen,2024,3.4,3.5,3.6,3.75
+mg-24065@students.ithb.ac.id,Manajemen,2024,2.9,3.1,3,3.25
+mg-24066@students.ithb.ac.id,Manajemen,2024,3.6,3.75,3.5,3.8
+mg-24067@students.ithb.ac.id,Manajemen,2024,3.85,3.7,3.75,3.9
+mg-24068@students.ithb.ac.id,Manajemen,2024,3.25,3.4,3.35,3.5
+mg-24069@students.ithb.ac.id,Manajemen,2024,3.7,3.5,3.6,3.8
