@@ -105,6 +105,8 @@ export default function AnalyticsPage() {
         const snap = await getDocs(
           query(collection(db, 'sessions'), orderBy('createdAt', 'desc')),
         );
+        // moduleTitle and label are already stored on each session document
+        // at creation time (see SessionsPage handleSubmit) — no extra lookups needed.
         if (!cancelled && mountedRef.current) {
           setSessions(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
         }
@@ -281,7 +283,7 @@ export default function AnalyticsPage() {
             <option value="all">Semua Sesi</option>
             {sessions.map((s) => (
               <option key={s.id} value={s.id}>
-                {s.name || s.sessionCode}
+                [{s.sessionCode}] {s.moduleTitle}{s.label ? `: ${s.label}` : ''}
               </option>
             ))}
           </select>

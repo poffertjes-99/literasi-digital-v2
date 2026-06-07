@@ -19,6 +19,14 @@ dist-ssr/
 firebase-debug.log*
 firebase-debug.env.*
 
+# ⚠️  CRITICAL SECURITY: Firebase Admin SDK service account key
+# NEVER commit this file — it grants full admin access to your entire Firebase
+# project (Firestore, Auth, Storage, etc.) with no restrictions.
+# If accidentally committed, rotate the key IMMEDIATELY in the Firebase console.
+serviceAccountKey.json
+*serviceAccountKey*.json
+service-account*.json
+
 # ----------------------------------------------------------------------------
 # 4. LOGS (Already Good)
 # ----------------------------------------------------------------------------
