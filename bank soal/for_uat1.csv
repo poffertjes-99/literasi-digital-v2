@@ -1,0 +1,30 @@
+ScenarioText,QuestionText,PillarCode,AreaCode,CompetencyCode,OptA,WeightA,OptB,WeightB,OptC,WeightC,OptD,WeightD,OptE,WeightE
+"","Saya bisa mengunduh file/aplikasi",DSK,0,0.2,"Sangat Tidak Mampu",1,"Tidak Mampu",2,"Cukup Mampu",3,"Mampu",4,"Sangat Mampu",5
+"","Saya bisa menghubungkan perangkat saya ke internet",DSK,0,0.1,"Sangat Tidak Mampu",1,"Tidak Mampu",2,"Cukup Mampu",3,"Mampu",4,"Sangat Mampu",5
+"","Saya bisa mengunggah file",DSK,0,0.2,"Sangat Tidak Mampu",1,"Tidak Mampu",2,"Cukup Mampu",3,"Mampu",4,"Sangat Mampu",5
+"","Saya bisa mencari dan mengakses data, informasi dan konten di media digital",DSK,1,1.1,"Sangat Tidak Mampu",1,"Tidak Mampu",2,"Cukup Mampu",3,"Mampu",4,"Sangat Mampu",5
+"","Saya memiliki kemampuan menyimpan data, informasi, dan konten dalam media digital",DSK,1,1.3,"Sangat Tidak Mampu",1,"Tidak Mampu",2,"Cukup Mampu",3,"Mampu",4,"Sangat Mampu",5
+"","Saya mampu berinteraksi melalui berbagai perangkat komunikasi teknologi digital",DSK,2,2.1,"Sangat Tidak Mampu",1,"Tidak Mampu",2,"Cukup Mampu",3,"Mampu",4,"Sangat Mampu",5
+"","Saya terbiasa belanja melalui loka pasar/e-commerce",DSK,2,2.3,"Sangat Tidak Mampu",1,"Tidak Mampu",2,"Cukup Mampu",3,"Mampu",4,"Sangat Mampu",5
+"","Saya terbiasa membandingkan berbagai sumber informasi untuk memutuskan apakah informasi itu benar",DSK,1,1.2,"Sangat Tidak Mampu",1,"Tidak Mampu",2,"Cukup Mampu",3,"Mampu",4,"Sangat Mampu",5
+"","Saya terbiasa mencari tahu pakah informasi yang saya temukan di situs web benar atau salah",DSK,1,1.2,"Sangat Tidak Mampu",1,"Tidak Mampu",2,"Cukup Mampu",3,"Mampu",4,"Sangat Mampu",5
+"","Saya tidak akan mengajak orang-orang untuk berkomentar negatif (terkait postingan di sosial media/berita/forum digital/)",DET,2,2.5,"Sangat Tidak Setuju",1,"Tidak Setuju",2,"Netral",3,"Setuju",4,"Sangat Setuju",5
+"","Saya tidak akan membagikan tangkapan layar percakapan privat ke media sosial",DET,4,4.2,"Sangat Tidak Setuju",1,"Tidak Setuju",2,"Netral",3,"Setuju",4,"Sangat Setuju",5
+"","Saya tidak berkomentar kasar jika pada orang yang komentar negatif pada postingan saya",DET,2,2.5,"Sangat Tidak Setuju",1,"Tidak Setuju",2,"Netral",3,"Setuju",4,"Sangat Setuju",5
+"","Saya tidak membuat grup dan menambahkan orang tanpa izin",DET,2,2.5,"Sangat Tidak Setuju",1,"Tidak Setuju",2,"Netral",3,"Setuju",4,"Sangat Setuju",5
+"","Saya tidak mengunggah foto bersama anak orang lain",DET,4,4.2,"Sangat Tidak Setuju",1,"Tidak Setuju",2,"Netral",3,"Setuju",4,"Sangat Setuju",5
+"","Saya tidak menandai teman tanpa perlu memberi tahu",DET,2,2.5,"Sangat Tidak Setuju",1,"Tidak Setuju",2,"Netral",3,"Setuju",4,"Sangat Setuju",5
+"","Saya tidak akan langsung membagikan informasi kecelakaan",DET,2,2.2,"Sangat Tidak Setuju",1,"Tidak Setuju",2,"Netral",3,"Setuju",4,"Sangat Setuju",5
+"","Saya terbiasa membuat password yang aman dengan kombinasi angka, huruf, dan tanda baca",DSA,4,4.1,"Sangat Tidak Setuju",1,"Tidak Setuju",2,"Netral",3,"Setuju",4,"Sangat Setuju",5
+"","Di akun media sosial, saya bisa mengatur siapa saja yang dapat melihat postingan saya",DSA,4,4.2,"Sangat Tidak Setuju",1,"Tidak Setuju",2,"Netral",3,"Setuju",4,"Sangat Setuju",5
+"","Saya dapat menonaktifkan opsi untuk menunjukkan posisi geografis",DSA,4,4.2,"Sangat Tidak Setuju",1,"Tidak Setuju",2,"Netral",3,"Setuju",4,"Sangat Setuju",5
+"","Saya melakukan back up data di beberapa tempat",DSA,4,4.1,"Sangat Tidak Setuju",1,"Tidak Setuju",2,"Netral",3,"Setuju",4,"Sangat Setuju",5
+"","Saya mengetahui cara report abuse/laporkan penyalahgunaan di jejaring sosial",DSA,4,4.3,"Sangat Tidak Setuju",1,"Tidak Setuju",2,"Netral",3,"Setuju",4,"Sangat Setuju",5
+"","Saya menggunakan aplikasi untuk menemukan dan menghapus virus",DSA,4,4.1,"Sangat Tidak Setuju",1,"Tidak Setuju",2,"Netral",3,"Setuju",4,"Sangat Setuju",5
+"","Saya bisa membedakan e-mail yang berisi spam/virus/malware",DSA,4,4.1,"Sangat Tidak Setuju",1,"Tidak Setuju",2,"Netral",3,"Setuju",4,"Sangat Setuju",5
+"","Saya menyesuaikan cara berkomunikasi agar pihak kedua/pendengar tidak merasa tersinggung/tidak dihargai",DCU,2,2.5,"Sangat Tidak Setuju",1,"Tidak Setuju",2,"Netral",3,"Setuju",4,"Sangat Setuju",5
+"","Saya mempertimbangkan perasaan pembaca yang berasal dari agama lain",DCU,2,2.5,"Sangat Tidak Setuju",1,"Tidak Setuju",2,"Netral",3,"Setuju",4,"Sangat Setuju",5
+"","Saya selalu mempertimbangkan dan menyadari keragaman budaya di media sosial saat membagikan pesan/informasi",DCU,2,2.5,"Sangat Tidak Setuju",1,"Tidak Setuju",2,"Netral",3,"Setuju",4,"Sangat Setuju",5
+"","Saya berbagi seni budaya tradisional dan kontemporer Indonesia secara digital",DCU,3,3.1,"Sangat Tidak Setuju",1,"Tidak Setuju",2,"Netral",3,"Setuju",4,"Sangat Setuju",5
+"","Saya mempertimbangkan perasaan pembaca yang memiliki pandangan politik berbeda",DCU,2,2.5,"Sangat Tidak Setuju",1,"Tidak Setuju",2,"Netral",3,"Setuju",4,"Sangat Setuju",5
+"","Saya mencantumkan nama penulis saat repost",DCU,3,3.3,"Sangat Tidak Setuju",1,"Tidak Setuju",2,"Netral",3,"Setuju",4,"Sangat Setuju",5
